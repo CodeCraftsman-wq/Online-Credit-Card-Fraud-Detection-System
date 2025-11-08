@@ -96,7 +96,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
                     </div>
                     <Progress
                       value={confidence}
-                      className="mt-2 h-2 [&>div]:"
+                      className="mt-2 h-2"
                       indicatorClassName={progressClass}
                     />
                   </div>
