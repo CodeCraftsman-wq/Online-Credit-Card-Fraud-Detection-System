@@ -28,9 +28,6 @@ import { cn } from '@/lib/utils';
 import { NextJsLogo } from '@/components/nextjs-logo';
 import { ReactLogo } from '@/components/react-logo';
 import { TypeScriptLogo } from '@/components/typescript-logo';
-import { TailwindLogo } from '@/components/tailwind-logo';
-import { FirebaseLogo } from '@/components/firebase-logo';
-import { GeminiLogo } from '@/components/gemini-logo';
 
 
 const formSchema = z.object({
@@ -42,9 +39,6 @@ const tech = [
   { name: 'Next.js', Icon: NextJsLogo },
   { name: 'React', Icon: ReactLogo },
   { name: 'TypeScript', Icon: TypeScriptLogo },
-  { name: 'Tailwind CSS', Icon: TailwindLogo },
-  { name: 'Firebase', Icon: FirebaseLogo },
-  { name: 'Gemini', Icon: GeminiLogo },
 ]
 
 export default function LoginPage() {
