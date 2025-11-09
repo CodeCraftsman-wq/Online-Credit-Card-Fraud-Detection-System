@@ -26,12 +26,26 @@ import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NextJsLogo } from '@/components/nextjs-logo';
+import { ReactLogo } from '@/components/react-logo';
+import { TypeScriptLogo } from '@/components/typescript-logo';
+import { TailwindLogo } from '@/components/tailwind-logo';
+import { FirebaseLogo } from '@/components/firebase-logo';
+import { GeminiLogo } from '@/components/gemini-logo';
 
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
   password: z.string().min(1, { message: 'Password is required.' }),
 });
+
+const tech = [
+  { name: 'Next.js', Icon: NextJsLogo },
+  { name: 'React', Icon: ReactLogo },
+  { name: 'TypeScript', Icon: TypeScriptLogo },
+  { name: 'Tailwind CSS', Icon: TailwindLogo },
+  { name: 'Firebase', Icon: FirebaseLogo },
+  { name: 'Gemini', Icon: GeminiLogo },
+]
 
 export default function LoginPage() {
   const router = useRouter();
@@ -134,15 +148,20 @@ export default function LoginPage() {
       </Card>
       <div
         className={cn(
-          "absolute bottom-4 space-y-2 text-center text-xs text-muted-foreground",
+          "absolute bottom-4 w-full px-4 space-y-4 text-center text-xs text-muted-foreground",
           animationClass('1000ms')
         )}
       >
-        <p>&copy; {new Date().getFullYear()} Made by Agnik Konar</p>
-        <div className='flex items-center justify-center gap-1.5'>
-          <span>Made with</span>
-          <NextJsLogo />
-          <span>Next.js</span>
+        <div className='space-y-2'>
+          <p>&copy; {new Date().getFullYear()} Made by Agnik Konar</p>
+        </div>
+        <div className='flex items-center justify-center gap-x-6 gap-y-2 flex-wrap'>
+          {tech.map(({ name, Icon }) => (
+            <div key={name} className="flex items-center gap-1.5">
+              <Icon className="text-foreground" />
+              <span>{name}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
