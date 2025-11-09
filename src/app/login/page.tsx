@@ -64,7 +64,7 @@ export default function LoginPage() {
     );
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <div className={cn("mx-auto mb-4", animationClass('0ms'))}>
@@ -130,6 +130,14 @@ export default function LoginPage() {
           </Form>
         </CardContent>
       </Card>
+       <div
+        className={cn(
+          "absolute bottom-4 text-center text-sm text-muted-foreground",
+          animationClass('1000ms')
+        )}
+      >
+        <p>&copy; {new Date().getFullYear()} Made by Agnik Konar</p>
+      </div>
     </div>
   );
 }
