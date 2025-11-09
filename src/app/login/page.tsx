@@ -97,7 +97,7 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full rounded-full font-semibold"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn && (
