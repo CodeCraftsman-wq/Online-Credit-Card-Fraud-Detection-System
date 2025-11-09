@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   SidebarProvider,
@@ -8,9 +10,31 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Home } from 'lucide-react';
+import { Home, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+
+function LogoutButton() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // In a real app, you'd clear session/token here
+    router.push('/login');
+  };
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={handleLogout} tooltip={{ children: 'Log Out' }}>
+        <LogOut />
+        <span>Log Out</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
 
 export default function AppLayout({
   children,
@@ -42,6 +66,11 @@ export default function AppLayout({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
+        <SidebarFooter>
+            <SidebarMenu>
+                <LogoutButton />
+            </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
