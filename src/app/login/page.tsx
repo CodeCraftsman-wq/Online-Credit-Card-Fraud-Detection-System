@@ -97,7 +97,7 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                className="w-full transition-transform duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn && (
