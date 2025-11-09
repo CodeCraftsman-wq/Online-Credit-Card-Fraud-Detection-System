@@ -22,6 +22,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Logo } from '@/components/logo';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -30,18 +32,22 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'user@example.com',
+      password: 'password',
     },
   });
 
   function onSubmit() {
+    setIsLoggingIn(true);
     // In a real app, you'd handle authentication here.
-    // For this demo, we'll just navigate to the dashboard.
-    router.push('/dashboard');
+    // For this demo, we'll just navigate to the dashboard after a short delay.
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 500);
   }
 
   return (
@@ -89,8 +95,15 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Log In
+              <Button
+                type="submit"
+                className="w-full transition-transform duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                disabled={isLoggingIn}
+              >
+                {isLoggingIn && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isLoggingIn ? 'Logging in...' : 'Log In'}
               </Button>
             </form>
           </Form>
