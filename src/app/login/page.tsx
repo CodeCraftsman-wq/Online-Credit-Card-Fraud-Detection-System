@@ -97,7 +97,7 @@ export default function LoginPage() {
               />
               <Button
                 type="submit"
-                className="w-full rounded-full font-semibold"
+                className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out hover:opacity-90 active:scale-95 active:opacity-75"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn && (
