@@ -62,9 +62,6 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
     >
       <CardHeader>
         <CardTitle>Real-time Prediction</CardTitle>
-        <CardDescription>
-          AI-powered analysis of the latest transaction.
-        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center space-y-4 text-center">
         {prediction && (
