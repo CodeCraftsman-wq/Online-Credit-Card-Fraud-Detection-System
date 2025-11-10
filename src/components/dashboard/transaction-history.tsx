@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
@@ -35,8 +36,13 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   
   const renderContent = () => {
     if (transactions.length > 0) {
-      return transactions.map((tx) => (
-        <TableRow key={tx.id}>
+      return transactions.map((tx, index) => (
+        <TableRow 
+            key={tx.id}
+            className={cn(
+                index === 0 && 'animate-highlight'
+            )}
+        >
           <TableCell>
             <Badge
               variant={

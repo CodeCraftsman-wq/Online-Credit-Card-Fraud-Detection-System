@@ -68,7 +68,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center space-y-4 text-center">
         {prediction && (
-           <div className="absolute top-4 right-4 animate-in fade-in zoom-in">
+           <div className="absolute top-4 right-4 animate-in fade-in zoom-in-50 duration-500">
              <div
                className={cn(
                  "flex h-12 w-12 items-center justify-center rounded-full bg-opacity-10",
