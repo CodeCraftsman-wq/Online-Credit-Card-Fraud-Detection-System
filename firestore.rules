@@ -1,0 +1,93 @@
+/**
+ * @fileoverview Firestore Security Rules for the credit card fraud detection system.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Each user can only access
+ * their own profile and the transactions associated with their account.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profile information. Only the user with the matching
+ *   UID can read or write to this document.
+ * - /users/{userId}/transactions/{transactionId}: Stores transaction data for a user.
+ *   Each transaction document includes a 'userId' field that must match the
+ *   'userId' in the path. This ensures that only the owner of the user account can
+ *   create, read, update, or delete transactions associated with their account.
+ *
+ * Key Security Decisions:
+ * - User listing is explicitly denied to prevent unauthorized access to user data.
+ * - Transaction documents are secured by path-based ownership and validated against
+ *   the 'userId' field within the document.
+ * - All write operations are restricted to authenticated users.
+ *
+ * Denormalization for Authorization:
+ * The 'userId' field is denormalized into the Transaction documents to enable
+ * Authorization Independence. This avoids costly and complex `get()` calls in the
+ * security rules to check user ownership.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Secure user profiles. Only the user with the matching UID can access their profile.
+     * @path /users/{userId}
+     * @allow (create) - User 'abc' with UID 'abc' can create their own profile.
+     * @allow (get, update, delete) - User 'abc' with UID 'abc' can read, update, and delete their profile.
+     * @deny (create) - User 'def' with UID 'def' cannot create a profile for user 'abc'.
+     * @deny (get, update, delete) - User 'def' with UID 'def' cannot read, update, or delete the profile of user 'abc'.
+     * @principle Enforces document ownership for all operations on user profiles.
+     */
+    match /users/{userId} {
+      // Helper function to check if the user is signed in and is the owner of the resource.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create their own profile if the UID matches.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+
+      // Allow the user to get their own profile.
+      allow get: if isOwner(userId);
+
+      // User can update their own profile, enforcing immutability of the 'id' field.
+      allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
+
+      // User can delete their own profile.
+      allow delete: if isOwner(userId) && resource != null;
+
+      // Prevent listing of all users.
+      allow list: if false;
+    }
+
+    /**
+     * @description Secure transaction data. Only the owner of the user account can access transactions associated with their account.
+     * @path /users/{userId}/transactions/{transactionId}
+     * @allow (create) - User 'abc' with UID 'abc' can create a transaction for their account.
+     * @allow (get, update, delete) - User 'abc' with UID 'abc' can read, update, and delete transactions associated with their account.
+     * @deny (create) - User 'def' with UID 'def' cannot create a transaction for user 'abc'.
+     * @deny (get, update, delete) - User 'def' with UID 'def' cannot read, update, or delete transactions of user 'abc'.
+     * @principle Enforces document ownership for all operations on transaction data, ensuring data privacy.
+     */
+    match /users/{userId}/transactions/{transactionId} {
+      // Helper function to check if the user is signed in and is the owner of the resource.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create a transaction if the UID matches and the transaction's userId matches the path.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+
+      // Allow the user to get their own transaction.
+      allow get: if isOwner(userId);
+
+      // Allow the user to update their own transaction.
+      allow update: if isOwner(userId) && resource != null;
+
+      // Allow the user to delete their own transaction.
+      allow delete: if isOwner(userId) && resource != null;
+
+      // Allow the owner to list their own transactions.
+      allow list: if isOwner(userId);
+    }
+  }
+}
