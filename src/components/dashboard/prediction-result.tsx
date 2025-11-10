@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import type { FraudPredictionOutput } from '@/ai/flows/real-time-fraud-prediction';
 import { ShieldAlert, ShieldCheck, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Separator } from '../ui/separator';
 
 interface PredictionResultProps {
   prediction: FraudPredictionOutput | null;
@@ -19,6 +20,7 @@ interface PredictionResultProps {
 export function PredictionResult({ prediction }: PredictionResultProps) {
   const isFraudulent = prediction?.isFraudulent;
   const confidence = (prediction?.confidenceScore ?? 0) * 100;
+  const reasoning = prediction?.reasoning;
 
   const status =
     prediction === null
@@ -80,7 +82,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
         <div data-state={prediction ? 'open' : 'closed'} className="w-full data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=open]:zoom-in-95">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             {prediction === null ? (
-                <div className="flex flex-col items-center justify-center h-40">
+                <div className="flex flex-col items-center justify-center h-48">
                   <Icon className="size-12 text-muted-foreground" />
                   <p className="mt-4 text-lg font-medium">{title}</p>
                   <p className="text-sm text-muted-foreground">{description}</p>
@@ -89,16 +91,29 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
                 <>
                   <p className={cn('text-2xl font-bold', colorClass)}>{title}</p>
                   <p className="text-muted-foreground">{description}</p>
-                  <div className="w-full pt-4">
-                    <div className="flex justify-between text-sm font-medium">
-                      <span>Confidence Score</span>
-                      <span className={colorClass}>{confidence.toFixed(0)}%</span>
+                  <div className="w-full pt-4 space-y-4">
+                    <div>
+                      <div className="flex justify-between text-sm font-medium">
+                        <span>Confidence Score</span>
+                        <span className={colorClass}>{confidence.toFixed(0)}%</span>
+                      </div>
+                      <Progress
+                        value={confidence}
+                        className="mt-2 h-2"
+                        indicatorClassName={progressClass}
+                      />
                     </div>
-                    <Progress
-                      value={confidence}
-                      className="mt-2 h-2"
-                      indicatorClassName={progressClass}
-                    />
+                    {reasoning && (
+                      <>
+                        <Separator />
+                        <div className='space-y-2 text-left'>
+                          <h4 className='font-medium text-sm'>AI Reasoning</h4>
+                          <p className='text-sm text-muted-foreground italic'>
+                            &quot;{reasoning}&quot;
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </>
             )}
