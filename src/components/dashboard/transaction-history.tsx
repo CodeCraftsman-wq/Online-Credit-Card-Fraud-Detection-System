@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -33,7 +34,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2, Trash2 } from 'lucide-react';
+import { Info, Loader2, Trash2, FileDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -45,6 +46,7 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isClearing, setIsClearing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -55,6 +57,82 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   }, [firestore, userId]);
   
   const { data: transactions, isLoading, error } = useCollection<Transaction>(transactionsQuery);
+
+  const handleExportToCSV = () => {
+    if (!transactions || transactions.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'No Data',
+        description: 'There is no transaction history to export.',
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    toast({
+      title: 'Exporting...',
+      description: 'Generating CSV file.',
+    });
+
+    try {
+      const headers = [
+        'Transaction ID',
+        'Status',
+        'Confidence Score',
+        'Amount (INR)',
+        'Location',
+        'Merchant',
+        'Time',
+        'AI Reasoning',
+      ];
+
+      const csvRows = [headers.join(',')];
+
+      const escapeCSV = (str: string) => `"${str.replace(/"/g, '""')}"`;
+
+      transactions.forEach(tx => {
+        const row = [
+          tx.id,
+          tx.prediction.isFraudulent ? 'Fraud' : 'Legit',
+          tx.prediction.confidenceScore.toFixed(2),
+          tx.amount,
+          escapeCSV(tx.location),
+          escapeCSV(tx.merchantDetails),
+          new Date(tx.time).toISOString(),
+          escapeCSV(tx.prediction.reasoning),
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const csvString = csvRows.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `fraudshield-history-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+       toast({
+        title: 'Export Complete',
+        description: 'Your transaction history has been downloaded.',
+      });
+
+    } catch (e: any) {
+      console.error('Failed to export to CSV:', e);
+      toast({
+        variant: 'destructive',
+        title: 'Export Failed',
+        description: e.message || 'Could not export transaction history.',
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleClearHistory = async () => {
     if (!firestore || !userId) return;
@@ -177,6 +255,8 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
     );
   };
 
+  const canPerformActions = !transactions || transactions.length === 0 || isLoading;
+
 
   return (
     <Card className="col-span-1 lg:col-span-2 glassmorphic">
@@ -187,38 +267,51 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
             A log of all simulated transactions and their fraud status.
           </CardDescription>
         </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="icon"
-              disabled={isClearing || !transactions || transactions.length === 0}
-              className="group text-muted-foreground transition-colors hover:text-destructive"
+              variant="outline"
+              size="sm"
+              disabled={canPerformActions || isExporting}
+              onClick={handleExportToCSV}
+              className="text-muted-foreground"
             >
-              <Trash2 className="size-5 transition-transform group-hover:scale-110 group-active:scale-95" />
-              <span className="sr-only">Clear History</span>
+              {isExporting ? <Loader2 className="mr-2 size-4 animate-spin" /> : <FileDown className="mr-2 size-4" />}
+              {isExporting ? 'Exporting...' : 'Export to CSV'}
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete all
-                transaction history records from the database.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleClearHistory}
-                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              >
-                {isClearing ? <Loader2 className="mr-2 animate-spin" /> : null}
-                {isClearing ? 'Clearing...' : 'Yes, clear history'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={canPerformActions || isClearing}
+                  className="group text-muted-foreground transition-colors hover:text-destructive"
+                >
+                  <Trash2 className="size-5 transition-transform group-hover:scale-110 group-active:scale-95" />
+                  <span className="sr-only">Clear History</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete all
+                    transaction history records from the database.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleClearHistory}
+                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                    disabled={isClearing}
+                  >
+                    {isClearing ? <Loader2 className="mr-2 animate-spin" /> : null}
+                    {isClearing ? 'Clearing...' : 'Yes, clear history'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+        </div>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[30rem]">
@@ -242,3 +335,5 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
     </Card>
   );
 }
+
+    
