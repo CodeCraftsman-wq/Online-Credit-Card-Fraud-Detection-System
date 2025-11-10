@@ -1,7 +1,6 @@
 'use server';
 
 import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
-import { analyzeTransactionData } from '@/ai/flows/analyze-transaction-data';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
 
@@ -31,20 +30,5 @@ export async function simulateAndPredictTransaction(
   } catch (e: any) {
     console.error(e);
     return { data: null, error: e.message || 'Failed to get fraud prediction.' };
-  }
-}
-
-export async function analyzeTransactions(
-  transactions: Transaction[]
-): Promise<{ data: string | null; error: string | null }> {
-    if (transactions.length === 0) {
-        return { data: 'There are no transactions to analyze.', error: null };
-    }
-  try {
-    const analysis = await analyzeTransactionData({transactions: JSON.stringify(transactions, null, 2)});
-    return { data: analysis, error: null };
-  } catch (e: any) {
-    console.error(e);
-    return { data: null, error: 'Failed to analyze transaction data.' };
   }
 }
