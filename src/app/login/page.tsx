@@ -80,7 +80,7 @@ function LoginPageContent() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-transparent p-4">
       <PlexusBackground />
       <Card className={cn(
-        "w-full max-w-sm border-border/20 bg-background/80 backdrop-blur-lg",
+        "w-full max-w-sm glassmorphic",
         isMounted ? 'animate-fade-in-up' : 'opacity-0'
       )}>
         <CardHeader className="text-center">
@@ -174,7 +174,7 @@ export default function LoginPage() {
     return (
         <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
         >

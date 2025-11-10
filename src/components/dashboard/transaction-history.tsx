@@ -40,6 +40,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
         <TableRow 
             key={tx.id}
             className={cn(
+                'border-b-white/5',
                 index === 0 && 'animate-highlight'
             )}
         >
@@ -50,18 +51,18 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   ? 'destructive'
                   : 'secondary'
               }
-              className={!tx.prediction.isFraudulent ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : ''}
+              className={!tx.prediction.isFraudulent ? 'bg-green-800/80 text-green-100 border-green-700' : 'border-red-700'}
             >
               {tx.prediction.isFraudulent ? 'Fraud' : 'Legit'}
             </Badge>
           </TableCell>
-          <TableCell className="font-mono text-xs">{tx.id}</TableCell>
+          <TableCell className="font-mono text-xs text-muted-foreground">{tx.id}</TableCell>
           <TableCell className="text-right font-medium">
             {formatCurrency(tx.amount)}
           </TableCell>
-          <TableCell>{tx.location}</TableCell>
-          <TableCell>{tx.merchantDetails}</TableCell>
-          <TableCell>
+          <TableCell className="text-muted-foreground">{tx.location}</TableCell>
+          <TableCell className="text-muted-foreground">{tx.merchantDetails}</TableCell>
+          <TableCell className="text-muted-foreground">
             {new Date(tx.time).toLocaleString()}
           </TableCell>
         </TableRow>
@@ -83,7 +84,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
 
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
+    <Card className="col-span-1 lg:col-span-2 glassmorphic">
       <CardHeader>
         <CardTitle>Transaction History</CardTitle>
         <CardDescription>
@@ -94,7 +95,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
         <ScrollArea className="h-[28.5rem]">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-b-white/10">
                 <TableHead>Status</TableHead>
                 <TableHead>Transaction ID</TableHead>
                 <TableHead className="text-right">Amount</TableHead>

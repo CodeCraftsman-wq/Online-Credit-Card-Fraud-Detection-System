@@ -48,8 +48,8 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
       Icon: ShieldCheck,
       title: 'Transaction appears Legitimate',
       description: 'This transaction seems normal.',
-      colorClass: 'text-green-600',
-      progressClass: 'bg-green-600',
+      colorClass: 'text-green-500',
+      progressClass: 'bg-green-500',
     },
   };
 
@@ -58,7 +58,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
 
   return (
     <Card
-      className="relative overflow-hidden"
+      className="relative overflow-hidden glassmorphic"
     >
       <CardHeader>
         <CardTitle>Real-time Prediction</CardTitle>
@@ -72,7 +72,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
              <div
                className={cn(
                  "flex h-12 w-12 items-center justify-center rounded-full bg-opacity-10",
-                 isFraudulent ? 'bg-destructive' : 'bg-green-600'
+                 isFraudulent ? 'bg-destructive' : 'bg-green-500'
                )}
              >
                <Icon className={cn('size-6', colorClass)} />

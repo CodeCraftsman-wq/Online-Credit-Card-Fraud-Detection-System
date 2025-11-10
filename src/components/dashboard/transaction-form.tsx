@@ -89,7 +89,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
   const isButtonDisabled = isSubmitting;
 
   return (
-    <Card>
+    <Card className="glassmorphic">
       <CardHeader>
         <CardTitle>Simulate Transaction</CardTitle>
         <CardDescription>
