@@ -41,7 +41,7 @@ export async function analyzeTransactions(
         return { data: 'There are no transactions to analyze.', error: null };
     }
   try {
-    const analysis = await analyzeTransactionData(JSON.stringify(transactions, null, 2));
+    const analysis = await analyzeTransactionData({transactions: JSON.stringify(transactions, null, 2)});
     return { data: analysis, error: null };
   } catch (e: any) {
     console.error(e);

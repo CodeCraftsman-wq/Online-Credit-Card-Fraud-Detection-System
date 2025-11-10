@@ -11,7 +11,9 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const AnalyzeTransactionDataInputSchema = z.string().describe('A JSON string containing an array of transaction objects, each with fields like amount, time, location, and merchant details.  Currency should be in INR (Rupees).');
+const AnalyzeTransactionDataInputSchema = z.object({
+    transactions: z.string().describe('A JSON string containing an array of transaction objects, each with fields like amount, time, location, and merchant details. Currency should be in INR (Rupees).')
+});
 export type AnalyzeTransactionDataInput = z.infer<typeof AnalyzeTransactionDataInputSchema>;
 
 const AnalyzeTransactionDataOutputSchema = z.string().describe('A summary of the analysis of the transaction data, highlighting any trends, patterns, or anomalies that could indicate fraudulent activity.');
@@ -30,7 +32,7 @@ const analyzeTransactionDataPrompt = ai.definePrompt({
 Analyze the following transaction data and provide a summary of your findings, including any trends, patterns, or anomalies that could indicate fraud.
 
 Transaction Data:
-{{{input}}}
+{{{transactions}}}
 
 Respond in markdown format.
 `,
@@ -43,7 +45,7 @@ const analyzeTransactionDataFlow = ai.defineFlow(
     outputSchema: AnalyzeTransactionDataOutputSchema,
   },
   async input => {
-    const {output} = await analyzeTransactionDataPrompt({input});
+    const {output} = await analyzeTransactionDataPrompt(input);
     return output!;
   }
 );
