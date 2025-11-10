@@ -6,6 +6,7 @@ import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
 
 const transactionSchema = z.object({
+  id: z.string().min(1, 'Transaction ID is required.'),
   amount: z.coerce.number().positive('Amount must be positive.'),
   time: z.string().min(1, 'Time is required.'),
   location: z.string().min(1, 'Location is required.'),
@@ -21,9 +22,9 @@ export async function simulateAndPredictTransaction(
   }
 
   try {
-    const prediction = await predictFraud(validation.data);
+    const { id, ...predictionInput } = validation.data;
+    const prediction = await predictFraud(predictionInput);
     const newTransaction: Transaction = {
-      id: crypto.randomUUID(),
       ...validation.data,
       prediction,
     };

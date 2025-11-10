@@ -47,6 +47,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Status</TableHead>
+                <TableHead>Transaction ID</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Merchant</TableHead>
@@ -69,6 +70,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                         {tx.prediction.isFraudulent ? 'Fraud' : 'Legit'}
                       </Badge>
                     </TableCell>
+                    <TableCell className="font-mono text-xs">{tx.id}</TableCell>
                     <TableCell className="text-right font-medium">
                       {formatCurrency(tx.amount)}
                     </TableCell>
@@ -81,7 +83,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                       <Info className="size-8" />
                       <span>No transactions yet.</span>

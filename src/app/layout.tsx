@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Fraud Detection System',
-  description: 'A system to detect fraudulent transactions in real-time.',
+  title: 'FraudShield',
+  description: 'A system to detect fraudulent transactions of Credit Card.',
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 import type { FraudPredictionOutput } from '@/ai/flows/real-time-fraud-prediction';
 
 export interface TransactionInput {
+  id: string;
   amount: number;
   time: string;
   location: string;
@@ -8,6 +9,5 @@ export interface TransactionInput {
 }
 
 export interface Transaction extends TransactionInput {
-  id: string;
   prediction: FraudPredictionOutput;
 }

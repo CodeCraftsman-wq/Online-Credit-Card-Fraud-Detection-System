@@ -23,10 +23,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Banknote, Clock, Loader2, MapPin, Store } from 'lucide-react';
+import { Banknote, Clock, Hash, Loader2, MapPin, Store } from 'lucide-react';
 import { useState } from 'react';
 
 const formSchema = z.object({
+  id: z.string().min(1, 'Transaction ID is required.'),
   amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
   time: z.string().min(1, 'Time is required.'),
   location: z.string().min(2, 'Location is required.'),
@@ -46,6 +47,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: `txn-${crypto.randomUUID().slice(0, 8)}`,
       amount: 1000,
       time: new Date().toISOString().slice(0, 16),
       location: 'Mumbai, India',
@@ -71,7 +73,15 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
         title: 'Success',
         description: 'Transaction simulated and analyzed.',
       });
-      form.reset(); // Reset form to default values
+      // Reset form with a new random ID
+      form.reset({
+        ...form.getValues(),
+        id: `txn-${crypto.randomUUID().slice(0, 8)}`,
+        amount: 1000,
+        time: new Date().toISOString().slice(0, 16),
+        location: 'Mumbai, India',
+        merchantDetails: 'Online Store',
+      });
     }
     setIsSubmitting(false);
   }
@@ -87,6 +97,26 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+             <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Transaction ID</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <Input
+                        placeholder="txn-..."
+                        className="pl-10"
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="amount"
