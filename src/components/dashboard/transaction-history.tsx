@@ -18,13 +18,23 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
+import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 
-interface TransactionHistoryProps {
-  transactions: Transaction[];
-}
+export function TransactionHistory() {
+  const { firestore } = useFirebase();
+  const { user, isUserLoading } = useUser();
 
-export function TransactionHistory({ transactions }: TransactionHistoryProps) {
+  const transactionsQuery = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return query(
+      collection(firestore, 'users', user.uid, 'transactions'),
+      orderBy('time', 'desc')
+    );
+  }, [firestore, user?.uid]);
+
+  const { data: transactions, isLoading, error } = useCollection<Omit<Transaction, 'id'>>(transactionsQuery);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -32,13 +42,83 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
       currency: 'INR',
     }).format(amount);
   };
+  
+  const renderContent = () => {
+    if (isLoading || isUserLoading) {
+      return (
+         <TableRow>
+          <TableCell colSpan={6} className="h-24 text-center">
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Loader2 className="size-8 animate-spin" />
+              <span>Loading transaction history...</span>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (error) {
+       return (
+        <TableRow>
+          <TableCell colSpan={6} className="h-24 text-center text-destructive">
+            <div className="flex flex-col items-center gap-2">
+              <Info className="size-8" />
+              <span>Error loading transactions.</span>
+              <span className="text-xs">{error.message}</span>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+    
+    if (transactions && transactions.length > 0) {
+      return transactions.map((tx) => (
+        <TableRow key={tx.id}>
+          <TableCell>
+            <Badge
+              variant={
+                tx.prediction.isFraudulent
+                  ? 'destructive'
+                  : 'secondary'
+              }
+              className={!tx.prediction.isFraudulent ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : ''}
+            >
+              {tx.prediction.isFraudulent ? 'Fraud' : 'Legit'}
+            </Badge>
+          </TableCell>
+          <TableCell className="font-mono text-xs">{tx.id}</TableCell>
+          <TableCell className="text-right font-medium">
+            {formatCurrency(tx.amount)}
+          </TableCell>
+          <TableCell>{tx.location}</TableCell>
+          <TableCell>{tx.merchantDetails}</TableCell>
+          <TableCell>
+            {new Date(tx.time).toLocaleString()}
+          </TableCell>
+        </TableRow>
+      ));
+    }
+
+    return (
+      <TableRow>
+        <TableCell colSpan={6} className="h-24 text-center">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Info className="size-8" />
+            <span>No transactions yet.</span>
+            <span className='text-xs'>Simulate a transaction to see its history here.</span>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
 
   return (
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader>
         <CardTitle>Transaction History</CardTitle>
         <CardDescription>
-          A log of all simulated transactions and their fraud status.
+          A log of all simulated transactions and their fraud status, stored in Firestore.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -55,43 +135,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.length > 0 ? (
-                transactions.map((tx) => (
-                  <TableRow key={tx.id}>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          tx.prediction.isFraudulent
-                            ? 'destructive'
-                            : 'secondary'
-                        }
-                        className={!tx.prediction.isFraudulent ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : ''}
-                      >
-                        {tx.prediction.isFraudulent ? 'Fraud' : 'Legit'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">{tx.id}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCurrency(tx.amount)}
-                    </TableCell>
-                    <TableCell>{tx.location}</TableCell>
-                    <TableCell>{tx.merchantDetails}</TableCell>
-                    <TableCell>
-                      {new Date(tx.time).toLocaleString()}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <Info className="size-8" />
-                      <span>No transactions yet.</span>
-                      <span className='text-xs'>Simulate a transaction to see its history here.</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
+              {renderContent()}
             </TableBody>
           </Table>
         </ScrollArea>

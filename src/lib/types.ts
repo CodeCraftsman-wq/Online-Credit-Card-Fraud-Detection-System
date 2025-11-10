@@ -9,5 +9,6 @@ export interface TransactionInput {
 }
 
 export interface Transaction extends TransactionInput {
+  userId: string; // Keep track of the owner
   prediction: FraudPredictionOutput;
 }
