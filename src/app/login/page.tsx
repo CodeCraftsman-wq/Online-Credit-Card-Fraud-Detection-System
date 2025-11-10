@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -28,6 +29,8 @@ import { cn } from '@/lib/utils';
 import { NextJsLogo } from '@/components/nextjs-logo';
 import { ReactLogo } from '@/components/react-logo';
 import { TypeScriptLogo } from '@/components/typescript-logo';
+import { PlexusBackground } from '@/components/ui/plexus-background';
+import { ThemeProvider, useTheme } from 'next-themes';
 
 
 const formSchema = z.object({
@@ -41,7 +44,7 @@ const tech = [
   { name: 'TypeScript', Icon: TypeScriptLogo },
 ]
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -74,9 +77,10 @@ export default function LoginPage() {
     );
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-transparent p-4">
+      <PlexusBackground />
       <Card className={cn(
-        "w-full max-w-sm",
+        "w-full max-w-sm border-border/20 bg-background/80 backdrop-blur-lg",
         isMounted ? 'animate-fade-in-up' : 'opacity-0'
       )}>
         <CardHeader className="text-center">
@@ -163,4 +167,18 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+
+export default function LoginPage() {
+    return (
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            <LoginPageContent />
+        </ThemeProvider>
+    )
 }
