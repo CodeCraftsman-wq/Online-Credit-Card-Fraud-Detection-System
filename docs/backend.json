@@ -1,0 +1,128 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the fraud detection system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "username": {
+          "type": "string",
+          "description": "User's username for login."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email"
+      ]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Represents a simulated or real credit card transaction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the transaction."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Transaction)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Transaction amount in INR (Rupees)."
+        },
+        "time": {
+          "type": "string",
+          "description": "Transaction timestamp.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the transaction."
+        },
+        "merchantDetails": {
+          "type": "string",
+          "description": "Details of the merchant involved in the transaction."
+        },
+        "fraudulent": {
+          "type": "boolean",
+          "description": "Indicates whether the transaction is predicted as fraudulent."
+        },
+        "confidenceScore": {
+          "type": "number",
+          "description": "Confidence score of the fraud prediction (0-1)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "amount",
+        "time",
+        "location",
+        "merchantDetails",
+        "fraudulent",
+        "confidenceScore"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "Transaction",
+          "schema": {
+            "$ref": "#/backend/entities/Transaction"
+          },
+          "description": "Stores transaction data. Path-based ownership: only the user {userId} can access transactions in this subcollection.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the user who owns the transaction."
+            },
+            {
+              "name": "transactionId",
+              "description": "Unique identifier for the transaction."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support a fraud detection system with user accounts and transaction tracking. It prioritizes security, scalability, and debuggability. Authorization Independence is achieved by leveraging path-based ownership for transactions, ensuring that each transaction is directly associated with a user's document. This eliminates the need for complex `get()` calls in security rules to determine ownership. Structural Segregation is maintained by placing all transactions for a user within a subcollection of their user document, ensuring that all documents within the `/users/{userId}/transactions` collection share the same security requirements. This also enforces the `User 1:N Transaction` relationship. The design supports the required QAPs by using path-based ownership and storing each user's transactions in the subcollection `/users/{userId}/transactions`. This structure makes it straightforward to write security rules that allow only the authenticated user to access their own transactions."
+  }
+}

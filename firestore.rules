@@ -1,0 +1,73 @@
+/**
+ * @fileoverview Firestore Security Rules for the fraud detection system.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Each user can only access their own profile data and associated transactions.
+ *
+ * Data Structure:
+ * - `/users/{userId}`: Stores user profile information.
+ * - `/users/{userId}/transactions/{transactionId}`: Stores transaction data for a specific user.
+ *
+ * Key Security Decisions:
+ * - Users can only create, read, update, and delete their own user documents and transactions.
+ * - Listing all users is disallowed. Listing transactions is only allowed for the owning user.
+ *
+ * Denormalization for Authorization:
+ *  - The `Transaction` entity requires a `userId` field to associate it with the owning `User`. This is enforced on creation to match the path.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Manages access to user profile documents. Only the user themselves can read or write their own profile.
+     * @path /users/{userId}
+     * @allow (create) User 'user_abc' can create their own profile document if request.auth.uid == 'user_abc' and request.resource.data.id == 'user_abc'.
+     * @allow (get) User 'user_abc' can read their own profile document if request.auth.uid == 'user_abc'.
+     * @allow (update) User 'user_abc' can update their own profile document if request.auth.uid == 'user_abc'.
+     * @allow (delete) User 'user_abc' can delete their own profile document if request.auth.uid == 'user_abc'.
+     * @deny (create) User 'user_xyz' cannot create a profile document for 'user_abc' because request.auth.uid != 'user_abc'.
+     * @deny (get) User 'user_xyz' cannot read the profile document of 'user_abc' because request.auth.uid != 'user_abc'.
+     * @principle Enforces document ownership, ensuring only the authenticated user can manage their profile.
+     */
+    match /users/{userId} {
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow get: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow list: if false;
+    }
+
+    /**
+     * @description Manages access to transaction documents within a user's subcollection. Only the user themselves can manage their own transactions.
+     * @path /users/{userId}/transactions/{transactionId}
+     * @allow (create) User 'user_abc' can create a transaction in their subcollection if request.auth.uid == 'user_abc' and request.resource.data.userId == 'user_abc'.
+     * @allow (get) User 'user_abc' can read a transaction in their subcollection if request.auth.uid == 'user_abc'.
+     * @allow (update) User 'user_abc' can update a transaction in their subcollection if request.auth.uid == 'user_abc'.
+     * @allow (delete) User 'user_abc' can delete a transaction in their subcollection if request.auth.uid == 'user_abc'.
+     * @deny (create) User 'user_xyz' cannot create a transaction in 'user_abc's subcollection because request.auth.uid != 'user_abc'.
+     * @deny (get) User 'user_xyz' cannot read a transaction in 'user_abc's subcollection because request.auth.uid != 'user_abc'.
+     * @principle Enforces strict ownership, limiting access to transactions to the owning user.
+     */
+    match /users/{userId}/transactions/{transactionId} {
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow get: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+  }
+}
