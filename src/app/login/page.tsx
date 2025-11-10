@@ -31,6 +31,7 @@ import { ReactLogo } from '@/components/react-logo';
 import { TypeScriptLogo } from '@/components/typescript-logo';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import { ThemeProvider, useTheme } from 'next-themes';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 
 const formSchema = z.object({
@@ -79,6 +80,9 @@ function LoginPageContent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-transparent p-4">
       <PlexusBackground />
+      <div className='absolute top-4 right-4'>
+        <ThemeToggle />
+      </div>
       <Card className={cn(
         "w-full max-w-sm glassmorphic",
         isMounted ? 'animate-fade-in-up' : 'opacity-0'

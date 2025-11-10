@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 function LogoutButton() {
   const router = useRouter();
@@ -85,13 +86,10 @@ export default function AppLayout({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            <SidebarMenu>
-              {/* The Logout button now manages its own state for the text change,
-                  but the parent layout will handle the page fade effect.
-                  I will modify the button to trigger a function passed via props.
-              */}
-               <LogoutButton />
-            </SidebarMenu>
+            <div className='flex items-center justify-between'>
+              <LogoutButton />
+              <ThemeToggle />
+            </div>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>{children}</SidebarInset>
