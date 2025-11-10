@@ -1,12 +1,10 @@
 'use server';
 
 import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
+import { generateSyntheticTransactions } from '@/ai/flows/generate-synthetic-transactions';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
 
-
-// This schema is now only for validating the input for the prediction.
-// The userId is no longer needed here as it's a client-side concern.
 const transactionInputSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive.'),
   time: z.string().min(1, 'Time is required.'),
@@ -14,8 +12,6 @@ const transactionInputSchema = z.object({
   merchantDetails: z.string().min(1, 'Merchant details are required.'),
 });
 
-// The server action now ONLY performs the prediction and returns the result.
-// It no longer interacts with Firestore.
 export async function simulateAndPredictTransaction(
   input: Omit<TransactionInput, 'id'>
 ): Promise<{ data: Transaction['prediction'] | null; error: string | null }> {
@@ -30,5 +26,39 @@ export async function simulateAndPredictTransaction(
   } catch (e: any) {
     console.error(e);
     return { data: null, error: e.message || 'Failed to get fraud prediction.' };
+  }
+}
+
+export async function generateAndPredictTransactions(
+  count: number
+): Promise<{ data: Omit<Transaction, 'userId'>[] | null; error: string | null }> {
+  try {
+    // 1. Generate synthetic transaction inputs
+    const generatedTransactions = await generateSyntheticTransactions({ count });
+    if (!generatedTransactions || generatedTransactions.length === 0) {
+      return { data: null, error: 'Failed to generate transactions.' };
+    }
+
+    // 2. Run fraud prediction on each generated transaction
+    const transactionsWithPredictions: Omit<Transaction, 'userId'>[] = [];
+
+    for (const txInput of generatedTransactions) {
+      try {
+        const prediction = await predictFraud(txInput);
+        transactionsWithPredictions.push({
+          id: `txn-${crypto.randomUUID().slice(0, 8)}`,
+          ...txInput,
+          prediction,
+        });
+      } catch (e) {
+        console.error('Skipping a transaction due to prediction error:', e);
+        // Skip this transaction if prediction fails, but continue with others
+      }
+    }
+    
+    return { data: transactionsWithPredictions, error: null };
+  } catch (e: any) {
+    console.error(e);
+    return { data: null, error: e.message || 'Failed to generate synthetic data.' };
   }
 }
