@@ -4,6 +4,9 @@ import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
 import { analyzeTransactionData } from '@/ai/flows/analyze-transaction-data';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase/index';
+import { getAuth } from 'firebase/auth';
 
 const transactionSchema = z.object({
   id: z.string().min(1, 'Transaction ID is required.'),
@@ -11,10 +14,11 @@ const transactionSchema = z.object({
   time: z.string().min(1, 'Time is required.'),
   location: z.string().min(1, 'Location is required.'),
   merchantDetails: z.string().min(1, 'Merchant details are required.'),
+  userId: z.string().min(1, 'User ID is required.'),
 });
 
 export async function simulateAndPredictTransaction(
-  input: TransactionInput
+  input: TransactionInput & { userId: string }
 ): Promise<{ data: Transaction | null; error: string | null }> {
   const validation = transactionSchema.safeParse(input);
   if (!validation.success) {
@@ -22,18 +26,27 @@ export async function simulateAndPredictTransaction(
   }
 
   try {
-    const { id, ...predictionInput } = validation.data;
+    const { id, userId, ...predictionInput } = validation.data;
     const prediction = await predictFraud(predictionInput);
+    
     const newTransaction: Transaction = {
       ...validation.data,
-      // userId is removed as we are not using authentication now
       prediction,
     };
+
+    // Save to Firestore
+    const { firestore } = initializeFirebase();
+    const transactionRef = doc(firestore, `users/${userId}/transactions/${id}`);
+    
+    // We are not using the non-blocking version here because we want to ensure
+    // the data is saved before returning the success response.
+    // This is a server action, so blocking is acceptable.
+    await setDoc(transactionRef, newTransaction);
     
     return { data: newTransaction, error: null };
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
-    return { data: null, error: 'Failed to get fraud prediction.' };
+    return { data: null, error: e.message || 'Failed to get fraud prediction.' };
   }
 }
 

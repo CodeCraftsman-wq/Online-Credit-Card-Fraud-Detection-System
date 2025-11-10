@@ -1,6 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import type { Transaction } from '@/lib/types';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -18,14 +21,25 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TransactionHistoryProps {
-  transactions: Transaction[];
+  userId: string;
 }
 
-export function TransactionHistory({ transactions }: TransactionHistoryProps) {
+export function TransactionHistory({ userId }: TransactionHistoryProps) {
+  const firestore = useFirestore();
+
+  const transactionsQuery = useMemoFirebase(() => {
+    if (!firestore || !userId) return null;
+    return query(
+      collection(firestore, 'users', userId, 'transactions'),
+      orderBy('time', 'desc')
+    );
+  }, [firestore, userId]);
+  
+  const { data: transactions, isLoading, error } = useCollection<Transaction>(transactionsQuery);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -35,13 +49,36 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   };
   
   const renderContent = () => {
-    if (transactions.length > 0) {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6} className="h-24 text-center">
+            <div className="flex items-center justify-center text-muted-foreground">
+              <Loader2 className="mr-2 size-6 animate-spin" />
+              <span>Loading Transaction History...</span>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (error) {
+       return (
+        <TableRow>
+          <TableCell colSpan={6} className="h-24 text-center text-destructive">
+             Error loading transactions. Please try again later.
+          </TableCell>
+        </TableRow>
+      );
+    }
+    
+    if (transactions && transactions.length > 0) {
       return transactions.map((tx, index) => (
         <TableRow 
             key={tx.id}
             className={cn(
                 'border-b-white/5',
-                index === 0 && 'animate-highlight'
+                 index === 0 && transactions.length > 1 && 'animate-highlight'
             )}
         >
           <TableCell>

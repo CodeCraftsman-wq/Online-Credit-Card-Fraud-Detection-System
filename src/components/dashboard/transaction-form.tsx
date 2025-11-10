@@ -38,9 +38,10 @@ type TransactionFormValues = z.infer<typeof formSchema>;
 
 interface TransactionFormProps {
   onNewTransaction: (transaction: Transaction) => void;
+  userId: string;
 }
 
-export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
+export function TransactionForm({ onNewTransaction, userId }: TransactionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -57,7 +58,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
 
   async function onSubmit(values: TransactionFormValues) {
     setIsSubmitting(true);
-    const { data, error } = await simulateAndPredictTransaction(values);
+    const { data, error } = await simulateAndPredictTransaction({ ...values, userId });
 
     if (error) {
       toast({
@@ -71,7 +72,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
       onNewTransaction(data);
       toast({
         title: 'Success',
-        description: 'Transaction simulated and ready for analysis.',
+        description: 'Transaction simulated and stored in history.',
       });
       // Reset form with a new random ID
       form.reset({
