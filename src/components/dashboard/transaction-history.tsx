@@ -18,23 +18,13 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2 } from 'lucide-react';
-import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { Info } from 'lucide-react';
 
-export function TransactionHistory() {
-  const { firestore } = useFirebase();
-  const { user, isUserLoading } = useUser();
+interface TransactionHistoryProps {
+  transactions: Transaction[];
+}
 
-  const transactionsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return query(
-      collection(firestore, 'users', user.uid, 'transactions'),
-      orderBy('time', 'desc')
-    );
-  }, [firestore, user?.uid]);
-
-  const { data: transactions, isLoading, error } = useCollection<Omit<Transaction, 'id'>>(transactionsQuery);
+export function TransactionHistory({ transactions }: TransactionHistoryProps) {
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -44,34 +34,7 @@ export function TransactionHistory() {
   };
   
   const renderContent = () => {
-    if (isLoading || isUserLoading) {
-      return (
-         <TableRow>
-          <TableCell colSpan={6} className="h-24 text-center">
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Loader2 className="size-8 animate-spin" />
-              <span>Loading transaction history...</span>
-            </div>
-          </TableCell>
-        </TableRow>
-      );
-    }
-
-    if (error) {
-       return (
-        <TableRow>
-          <TableCell colSpan={6} className="h-24 text-center text-destructive">
-            <div className="flex flex-col items-center gap-2">
-              <Info className="size-8" />
-              <span>Error loading transactions.</span>
-              <span className="text-xs">{error.message}</span>
-            </div>
-          </TableCell>
-        </TableRow>
-      );
-    }
-    
-    if (transactions && transactions.length > 0) {
+    if (transactions.length > 0) {
       return transactions.map((tx) => (
         <TableRow key={tx.id}>
           <TableCell>
@@ -118,7 +81,7 @@ export function TransactionHistory() {
       <CardHeader>
         <CardTitle>Transaction History</CardTitle>
         <CardDescription>
-          A log of all simulated transactions and their fraud status, stored in Firestore.
+          A log of all simulated transactions and their fraud status.
         </CardDescription>
       </CardHeader>
       <CardContent>

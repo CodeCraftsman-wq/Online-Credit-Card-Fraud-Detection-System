@@ -25,7 +25,6 @@ import {
 } from '@/components/ui/card';
 import { Banknote, Clock, Hash, Loader2, MapPin, Store } from 'lucide-react';
 import { useState } from 'react';
-import { useUser } from '@/firebase';
 
 const formSchema = z.object({
   id: z.string().min(1, 'Transaction ID is required.'),
@@ -44,7 +43,6 @@ interface TransactionFormProps {
 export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -58,18 +56,8 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
   });
 
   async function onSubmit(values: TransactionFormValues) {
-    if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'You must be logged in to simulate a transaction.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
-    // Pass the userId to the server action
-    const { data, error } = await simulateAndPredictTransaction(values, user.uid);
+    const { data, error } = await simulateAndPredictTransaction(values);
 
     if (error) {
       toast({
@@ -83,7 +71,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
       onNewTransaction(data);
       toast({
         title: 'Success',
-        description: 'Transaction simulated and saved to your history.',
+        description: 'Transaction simulated and ready for analysis.',
       });
       // Reset form with a new random ID
       form.reset({
@@ -98,7 +86,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
     setIsSubmitting(false);
   }
 
-  const isButtonDisabled = isSubmitting || isUserLoading || !user;
+  const isButtonDisabled = isSubmitting;
 
   return (
     <Card>
@@ -208,7 +196,7 @@ export function TransactionForm({ onNewTransaction }: TransactionFormProps) {
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isUserLoading ? 'Connecting...' : isSubmitting ? 'Analyzing...' : 'Run Prediction'}
+              {isSubmitting ? 'Analyzing...' : 'Run Prediction'}
             </Button>
           </form>
         </Form>

@@ -1,32 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Transaction } from '@/lib/types';
 import type { FraudPredictionOutput } from '@/ai/flows/real-time-fraud-prediction';
 import { TransactionForm } from '@/components/dashboard/transaction-form';
 import { PredictionResult } from '@/components/dashboard/prediction-result';
 import { TransactionHistory } from '@/components/dashboard/transaction-history';
-import { useAuth, useUser } from '@/firebase';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 export default function DashboardPage() {
-  const auth = useAuth();
-  const { user, isUserLoading } = useUser();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [currentPrediction, setCurrentPrediction] =
     useState<FraudPredictionOutput | null>(null);
 
-  useEffect(() => {
-    // When the component mounts and the user is not logged in and we are not in a loading state,
-    // then sign the user in anonymously.
-    if (!isUserLoading && !user) {
-      initiateAnonymousSignIn(auth);
-    }
-  }, [isUserLoading, user, auth]);
-
   const handleNewTransaction = (transaction: Transaction) => {
-    // The history is now managed by Firestore, but we still want to update
-    // the real-time prediction result component.
     setCurrentPrediction(transaction.prediction);
+    setTransactions((prev) => [transaction, ...prev]);
   };
 
   return (
@@ -37,7 +25,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid gap-4 lg:col-span-2">
            <PredictionResult prediction={currentPrediction} />
-           <TransactionHistory />
+           <TransactionHistory transactions={transactions} />
         </div>
       </div>
     </main>
