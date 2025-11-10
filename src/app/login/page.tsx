@@ -69,18 +69,21 @@ export default function LoginPage() {
 
   const animationClass = (delay: string) =>
     cn(
-      'opacity-0 animate-fade-in-slide-up fill-mode-forwards',
+      'opacity-0 animate-fade-in-up fill-mode-forwards',
       isMounted ? `animation-delay-[${delay}]` : ''
     );
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-sm">
+      <Card className={cn(
+        "w-full max-w-sm",
+        isMounted ? 'animate-fade-in-up' : 'opacity-0'
+      )}>
         <CardHeader className="text-center">
-          <div className={cn("mx-auto mb-4", animationClass('0ms'))}>
+          <div className={cn("mx-auto mb-4", animationClass('150ms'))}>
             <Logo className="size-12" />
           </div>
-          <div className={cn(animationClass('200ms'))}>
+          <div className={cn(animationClass('300ms'))}>
             <CardTitle className="text-2xl">Fraud Detection System</CardTitle>
             <CardDescription>
               Enter your credentials to access your dashboard.
@@ -90,7 +93,7 @@ export default function LoginPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className={cn(animationClass('400ms'))}>
+              <div className={cn(animationClass('450ms'))}>
                 <FormField
                   control={form.control}
                   name="email"
@@ -124,7 +127,7 @@ export default function LoginPage() {
                   )}
                 />
               </div>
-              <div className={cn(animationClass('800ms'))}>
+              <div className={cn(animationClass('750ms'))}>
                 <Button
                   type="submit"
                   className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out active:scale-95 active:opacity-75 hover:opacity-90"
@@ -143,7 +146,7 @@ export default function LoginPage() {
       <div
         className={cn(
           "absolute bottom-4 w-full px-4 space-y-4 text-center text-xs text-muted-foreground",
-          animationClass('1000ms')
+          animationClass('900ms')
         )}
       >
         <div className='space-y-2'>
