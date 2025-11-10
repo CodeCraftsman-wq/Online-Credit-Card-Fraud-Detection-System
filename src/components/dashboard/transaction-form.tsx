@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { simulateAndPredictTransaction } from '@/app/actions';
-import type { Transaction } from '@/lib/types';
+import type { Transaction, TransactionInput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -25,6 +25,11 @@ import {
 } from '@/components/ui/card';
 import { Banknote, Clock, Hash, Loader2, MapPin, Store } from 'lucide-react';
 import { useState } from 'react';
+import { useFirestore } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 
 const formSchema = z.object({
   id: z.string().min(1, 'Transaction ID is required.'),
@@ -44,6 +49,7 @@ interface TransactionFormProps {
 export function TransactionForm({ onNewTransaction, userId }: TransactionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
@@ -58,36 +64,73 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
 
   async function onSubmit(values: TransactionFormValues) {
     setIsSubmitting(true);
-    const { data, error } = await simulateAndPredictTransaction({ ...values, userId });
+    
+    // 1. Get prediction from Server Action
+    const { data: prediction, error } = await simulateAndPredictTransaction(values);
 
-    if (error) {
+    if (error || !prediction) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error,
+        description: error || 'Failed to get fraud prediction.',
       });
+      setIsSubmitting(false);
+      return;
     }
 
-    if (data) {
-      onNewTransaction(data);
+    // 2. If prediction is successful, create the full transaction object
+    const newTransaction: Transaction = {
+      ...values,
+      userId,
+      prediction,
+    };
+    
+    // 3. Save the full transaction object to Firestore from the client
+    try {
+      const transactionRef = doc(firestore, `users/${userId}/transactions/${newTransaction.id}`);
+      
+      // Using a non-blocking write with error handling
+      setDoc(transactionRef, newTransaction)
+        .then(() => {
+          onNewTransaction(newTransaction);
+          toast({
+            title: 'Success',
+            description: 'Transaction simulated and stored in history.',
+          });
+          form.reset({
+            ...form.getValues(),
+            id: `txn-${crypto.randomUUID().slice(0, 8)}`,
+            amount: Math.floor(Math.random() * 99000) + 1000, // Random amount for next demo
+            time: new Date().toISOString().slice(0, 16),
+            location: 'Mumbai, India',
+            merchantDetails: 'Online Store',
+          });
+        })
+        .catch((err) => {
+          console.error("Firestore write error:", err);
+          const permissionError = new FirestorePermissionError({
+            path: transactionRef.path,
+            operation: 'create',
+            requestResourceData: newTransaction,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+          toast({
+            variant: 'destructive',
+            title: 'Database Error',
+            description: 'Could not save transaction to history.',
+          });
+        });
+
+    } catch(e: any) {
       toast({
-        title: 'Success',
-        description: 'Transaction simulated and stored in history.',
+        variant: 'destructive',
+        title: 'Error',
+        description: e.message || "An unexpected error occurred.",
       });
-      // Reset form with a new random ID
-      form.reset({
-        ...form.getValues(),
-        id: `txn-${crypto.randomUUID().slice(0, 8)}`,
-        amount: 1000,
-        time: new Date().toISOString().slice(0, 16),
-        location: 'Mumbai, India',
-        merchantDetails: 'Online Store',
-      });
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   }
-
-  const isButtonDisabled = isSubmitting;
 
   return (
     <Card className="glassmorphic">
@@ -133,7 +176,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
                         type="number"
                         placeholder="1000"
                         className="pl-10"
-                        {...field}
+                        {...form.register('amount', { valueAsNumber: true })}
                       />
                     </div>
                   </FormControl>
@@ -193,7 +236,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
