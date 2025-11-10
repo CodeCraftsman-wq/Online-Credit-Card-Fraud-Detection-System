@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import type { Transaction } from '@/lib/types';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
+import { analyzeTransactions } from '@/app/actions';
 import {
   Card,
   CardContent,
@@ -19,10 +20,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2 } from 'lucide-react';
+import { Info, Loader2, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface TransactionHistoryProps {
   userId: string;
@@ -30,6 +40,10 @@ interface TransactionHistoryProps {
 
 export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const firestore = useFirestore();
+  const { toast } = useToast();
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [isDialogOpwn, setIsDialogOpen] = useState(false);
 
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -40,6 +54,34 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   }, [firestore, userId]);
   
   const { data: transactions, isLoading, error } = useCollection<Transaction>(transactionsQuery);
+
+  const handleAnalyze = async () => {
+    if (!transactions || transactions.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'No Data',
+        description: 'There are no transactions to analyze.',
+      });
+      return;
+    }
+    setIsAnalyzing(true);
+    try {
+      const result = await analyzeTransactions(transactions);
+      if (result.error || !result.data) {
+        throw new Error(result.error || 'Analysis failed to return data.');
+      }
+      setAnalysisResult(result.data);
+      setIsDialogOpen(true);
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Analysis Failed',
+        description: err.message || 'An unexpected error occurred during analysis.',
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -121,15 +163,31 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
 
 
   return (
+    <>
     <Card className="col-span-1 lg:col-span-2 glassmorphic">
-      <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
-        <CardDescription>
-          A log of all simulated transactions and their fraud status.
-        </CardDescription>
+      <CardHeader className='flex-row items-center justify-between'>
+        <div className='space-y-1.5'>
+            <CardTitle>Transaction History</CardTitle>
+            <CardDescription>
+            A log of all simulated transactions and their fraud status.
+            </CardDescription>
+        </div>
+        <Button 
+            variant="outline"
+            size="sm"
+            onClick={handleAnalyze}
+            disabled={isAnalyzing || isLoading || !transactions || transactions.length === 0}
+        >
+            {isAnalyzing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+                <Bot className="mr-2 h-4 w-4" />
+            )}
+            Analyze History
+        </Button>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[28.5rem]">
+        <ScrollArea className="h-[26.5rem]">
           <Table>
             <TableHeader>
               <TableRow className="border-b-white/10">
@@ -148,5 +206,22 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
         </ScrollArea>
       </CardContent>
     </Card>
+    <Dialog open={isDialogOpwn} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Transaction Analysis Report</DialogTitle>
+            <DialogDescription>
+              AI-powered analysis of your recent transaction history.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] my-4">
+             <div
+                className="prose prose-sm prose-invert"
+                dangerouslySetInnerHTML={{ __html: analysisResult ? analysisResult.replace(/\n/g, '<br />') : '' }}
+              />
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

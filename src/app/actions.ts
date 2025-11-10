@@ -43,7 +43,7 @@ export async function analyzeTransactions(
   try {
     const analysis = await analyzeTransactionData(JSON.stringify(transactions, null, 2));
     return { data: analysis, error: null };
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     return { data: null, error: 'Failed to analyze transaction data.' };
   }
