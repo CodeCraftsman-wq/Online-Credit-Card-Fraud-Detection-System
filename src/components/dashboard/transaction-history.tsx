@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Transaction } from '@/lib/types';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, writeBatch } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -19,10 +19,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2 } from 'lucide-react';
+import { Info, Loader2, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface TransactionHistoryProps {
   userId: string;
@@ -30,6 +43,8 @@ interface TransactionHistoryProps {
 
 export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const firestore = useFirestore();
+  const { toast } = useToast();
+  const [isClearing, setIsClearing] = useState(false);
   
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -40,6 +55,49 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   }, [firestore, userId]);
   
   const { data: transactions, isLoading, error } = useCollection<Transaction>(transactionsQuery);
+
+  const handleClearHistory = async () => {
+    if (!firestore || !userId) return;
+    
+    setIsClearing(true);
+    toast({
+      title: 'Clearing History...',
+      description: 'Please wait while we remove all transactions.',
+    });
+
+    try {
+      const transactionsCollectionRef = collection(firestore, `users/${userId}/transactions`);
+      const querySnapshot = await getDocs(transactionsCollectionRef);
+      
+      if (querySnapshot.empty) {
+        toast({ title: 'History is already empty.' });
+        setIsClearing(false);
+        return;
+      }
+
+      const batch = writeBatch(firestore);
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      await batch.commit();
+
+      toast({
+        title: 'Success!',
+        description: 'Transaction history has been cleared.',
+      });
+
+    } catch (e: any) {
+      console.error('Failed to clear history:', e);
+      toast({
+        variant: 'destructive',
+        title: 'Error Clearing History',
+        description: e.message || 'Could not clear transaction history.',
+      });
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -122,11 +180,45 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
 
   return (
     <Card className="col-span-1 lg:col-span-2 glassmorphic">
-      <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
-        <CardDescription>
-          A log of all simulated transactions and their fraud status.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Transaction History</CardTitle>
+          <CardDescription>
+            A log of all simulated transactions and their fraud status.
+          </CardDescription>
+        </div>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={isClearing || !transactions || transactions.length === 0}
+              className="group text-muted-foreground transition-colors hover:text-destructive"
+            >
+              <Trash2 className="size-5 transition-transform group-hover:scale-110 group-active:scale-95" />
+              <span className="sr-only">Clear History</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete all
+                transaction history records from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleClearHistory}
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+              >
+                {isClearing ? <Loader2 className="mr-2 animate-spin" /> : null}
+                {isClearing ? 'Clearing...' : 'Yes, clear history'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[30rem]">
