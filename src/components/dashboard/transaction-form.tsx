@@ -282,11 +282,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
              onClick={handleGenerateSamples}
              disabled={isGenerating || isSubmitting}
            >
-             {isGenerating ? (
-               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-             ) : (
-                <Sparkles className="mr-2 h-4 w-4" />
-             )}
+             <Sparkles className={`mr-2 h-4 w-4 ${isGenerating ? 'animate-gemini-shimmer' : ''}`} />
              {isGenerating ? 'Generating...' : 'Generate 5 Samples with AI'}
            </Button>
         </div>

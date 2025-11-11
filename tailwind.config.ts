@@ -116,6 +116,20 @@ export default {
             backgroundColor: 'transparent',
           },
         },
+        'gemini-shimmer': {
+          '0%': {
+            transform: 'rotate(0deg) scale(1)',
+            opacity: '0.5',
+          },
+          '50%': {
+            transform: 'rotate(180deg) scale(1.2)',
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'rotate(360deg) scale(1)',
+            opacity: '0.5',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -123,6 +137,7 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out',
         'fade-in-down': 'fade-in-down 0.5s ease-out',
         highlight: 'highlight 1.5s ease-out',
+        'gemini-shimmer': 'gemini-shimmer 1.5s infinite ease-in-out',
       },
     },
   },
