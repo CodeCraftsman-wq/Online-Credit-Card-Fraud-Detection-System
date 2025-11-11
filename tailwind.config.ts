@@ -119,15 +119,21 @@ export default {
         'gemini-shimmer': {
           '0%': {
             transform: 'rotate(0deg) scale(1)',
-            opacity: '0.5',
+            color: '#4285F4', // Blue
+          },
+          '25%': {
+            color: '#E06981', // Pink/Red
           },
           '50%': {
             transform: 'rotate(180deg) scale(1.2)',
-            opacity: '1',
+            color: '#8869E0', // Purple
+          },
+          '75%': {
+            color: '#69BDE0', // Light Blue
           },
           '100%': {
             transform: 'rotate(360deg) scale(1)',
-            opacity: '0.5',
+            color: '#4285F4', // Blue
           },
         },
       },
@@ -137,7 +143,7 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out',
         'fade-in-down': 'fade-in-down 0.5s ease-out',
         highlight: 'highlight 1.5s ease-out',
-        'gemini-shimmer': 'gemini-shimmer 1.5s infinite ease-in-out',
+        'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
       },
     },
   },
