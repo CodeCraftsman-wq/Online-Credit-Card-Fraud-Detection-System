@@ -37,7 +37,7 @@ export async function analyzeTransactionData(input: AnalyzeTransactionDataInput)
 
 const analyzeTransactionDataPrompt = ai.definePrompt({
   name: 'analyzeTransactionDataPrompt',
-  input: {schema: AnalyzeTransactionDataInputSchema},
+  input: {schema: z.object({ transactionsJson: z.string() })},
   output: {schema: AnalyzeTransactionDataOutputSchema},
   prompt: `You are a senior fraud analyst providing a high-level summary for a team meeting.
 You have been given a list of recent transactions, each already flagged by a real-time system.
@@ -53,7 +53,7 @@ Based on the provided transaction data, generate a concise, well-structured repo
 Start with a high-level summary, then use headings and bullet points to detail specific patterns you've observed.
 
 Transaction Data:
-{{{jsonStringify input}}}
+{{{transactionsJson}}}
 `,
 });
 
@@ -64,7 +64,9 @@ const analyzeTransactionDataFlow = ai.defineFlow(
     outputSchema: AnalyzeTransactionDataOutputSchema,
   },
   async input => {
-    const {output} = await analyzeTransactionDataPrompt(input);
+    // Convert the array of transactions into a JSON string before passing it to the prompt.
+    const transactionsJson = JSON.stringify(input, null, 2);
+    const {output} = await analyzeTransactionDataPrompt({ transactionsJson });
     return output!;
   }
 );
