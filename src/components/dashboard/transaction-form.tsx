@@ -265,7 +265,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting || isGenerating}>
+            <Button type="submit" className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out active:scale-95 active:opacity-75 hover:opacity-90" disabled={isSubmitting || isGenerating}>
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
