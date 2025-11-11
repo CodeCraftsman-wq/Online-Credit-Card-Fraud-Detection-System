@@ -23,7 +23,6 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221 83% 53%;
-    --radius: 0.5rem;
     
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -85,6 +84,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    @apply transition-colors duration-300 ease-in-out;
   }
 }
 
