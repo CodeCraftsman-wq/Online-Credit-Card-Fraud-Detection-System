@@ -25,7 +25,7 @@ The project is built using a modern, robust, and scalable technology stack:
 -   **Icons:** **Lucide React** - A library of simply designed, beautiful icons.
 -   **Hosting:** **Firebase App Hosting** - The application is configured for deployment on Firebase's managed, secure hosting platform for web apps.
 
-## Functional Requirements (for SRS)
+## Functional Requirements
 
 ### 1. User Authentication
 
