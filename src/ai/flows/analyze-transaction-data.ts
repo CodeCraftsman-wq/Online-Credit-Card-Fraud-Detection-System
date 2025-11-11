@@ -68,7 +68,10 @@ const analyzeTransactionDataFlow = ai.defineFlow(
     const transactionsJson = JSON.stringify(input, null, 2);
     const {output} = await analyzeTransactionDataPrompt({ transactionsJson });
     
-    // Ensure we always return a string to satisfy the schema.
-    return output || 'The AI did not generate an analysis for this data.';
+    // Ensure we always return a non-empty string to satisfy the schema.
+    if (!output) {
+      return 'The AI did not generate an analysis for this data. This may be due to the content of the data or a temporary model issue.';
+    }
+    return output;
   }
 );
