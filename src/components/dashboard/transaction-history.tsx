@@ -45,7 +45,7 @@ import { Info, Loader2, Trash2, FileDown, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { analyzeTransactions } from '@/app/actions';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import ReactMarkdown from 'react-markdown';
 
 interface TransactionHistoryProps {
   userId: string;
@@ -420,3 +420,7 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
     </Card>
   );
 }
+
+    
+
+    
