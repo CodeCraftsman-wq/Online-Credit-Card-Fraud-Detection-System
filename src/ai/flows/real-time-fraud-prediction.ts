@@ -21,7 +21,11 @@ export type FraudPredictionInput = z.infer<typeof FraudPredictionInputSchema>;
 const FraudPredictionOutputSchema = z.object({
   isFraudulent: z.boolean().describe('Whether the transaction is predicted as fraudulent.'),
   confidenceScore: z.number().describe('The confidence score of the fraud prediction.'),
-  reasoning: z.string().describe('A brief explanation of why the transaction is or is not considered fraudulent, based on the provided data.'),
+  reasoning: z.string().describe('A brief, single-sentence explanation of the key factors that influenced the prediction.'),
+  riskFactors: z.array(z.object({
+    factor: z.string().describe('The name of the risk factor (e.g., "High amount", "Unusual location").'),
+    score: z.number().describe('The numeric contribution of this factor to the overall confidence score (e.g., 0.45).')
+  })).describe('A breakdown of individual risk factors and their contribution to the fraud score. This should only be populated if the transaction is fraudulent.')
 });
 export type FraudPredictionOutput = z.infer<typeof FraudPredictionOutputSchema>;
 
@@ -46,7 +50,16 @@ Transaction Time: {{{time}}}
 Transaction Location: {{{location}}}
 Merchant Details: {{{merchantDetails}}}
 
-Based on these details, determine if the transaction is fraudulent, provide a confidence score (0 to 1), and a concise reasoning for your decision. The reasoning should be a single sentence explaining the key factors that influenced your prediction.
+Based on these details, determine if the transaction is fraudulent, provide a confidence score (0 to 1), and a concise reasoning for your decision.
+
+If the transaction is fraudulent, you MUST provide a 'riskFactors' array. Each item in the array should represent a reason for the fraud flag and its estimated contribution to the total confidence score.
+For example: [
+  { "factor": "High transaction amount", "score": 0.45 },
+  { "factor": "Unusual location", "score": 0.32 }
+]
+The sum of the risk factor scores should approximate the overall confidenceScore.
+
+If the transaction is NOT fraudulent, the 'riskFactors' array should be empty.
 `,
 });
 

@@ -21,6 +21,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
   const isFraudulent = prediction?.isFraudulent;
   const confidence = (prediction?.confidenceScore ?? 0) * 100;
   const reasoning = prediction?.reasoning;
+  const riskFactors = prediction?.riskFactors ?? [];
 
   const status =
     prediction === null
@@ -100,14 +101,31 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
                         indicatorClassName={progressClass}
                       />
                     </div>
+                    
                     {reasoning && (
+                      <div className='space-y-2 text-left p-3 bg-card/50 rounded-lg'>
+                        <h4 className='font-medium text-sm'>AI Reasoning</h4>
+                        <p className='text-sm text-muted-foreground italic'>
+                          &quot;{reasoning}&quot;
+                        </p>
+                      </div>
+                    )}
+                    
+                    {isFraudulent && riskFactors.length > 0 && (
                       <>
                         <Separator />
-                        <div className='space-y-2 text-left'>
-                          <h4 className='font-medium text-sm'>AI Reasoning</h4>
-                          <p className='text-sm text-muted-foreground italic'>
-                            &quot;{reasoning}&quot;
-                          </p>
+                        <div className="space-y-2 text-left">
+                          <h4 className="font-medium text-sm">Risk Factor Breakdown</h4>
+                          <ul className="space-y-1 text-sm text-muted-foreground">
+                            {riskFactors.map((item, index) => (
+                              <li key={index} className="flex justify-between items-center">
+                                <span>- {item.factor}</span>
+                                <span className="font-mono text-destructive/80">
+                                  (+{item.score.toFixed(2)})
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       </>
                     )}
