@@ -31,12 +31,21 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2, Trash2, FileDown } from 'lucide-react';
+import { Info, Loader2, Trash2, FileDown, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { analyzeTransactions } from '@/app/actions';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 interface TransactionHistoryProps {
   userId: string;
@@ -47,6 +56,9 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const { toast } = useToast();
   const [isClearing, setIsClearing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [isAnalysisDialogOpen, setIsAnalysisDialogOpen] = useState(false);
   
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -177,6 +189,42 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
     }
   };
 
+  const handleAnalyzeHistory = async () => {
+    if (!transactions || transactions.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'No Data',
+        description: 'There is no transaction history to analyze.',
+      });
+      return;
+    }
+    
+    setIsAnalyzing(true);
+    toast({
+      title: 'AI is Analyzing...',
+      description: 'The AI is looking for patterns in your transaction history.',
+    });
+
+    const { data: analysis, error } = await analyzeTransactions(transactions);
+
+    if (error || !analysis) {
+      toast({
+        variant: 'destructive',
+        title: 'Analysis Failed',
+        description: error || 'Failed to analyze transaction data.',
+      });
+    } else {
+      setAnalysisResult(analysis);
+      setIsAnalysisDialogOpen(true);
+      toast({
+        title: 'Analysis Complete',
+        description: 'The AI has generated a report.',
+      });
+    }
+
+    setIsAnalyzing(false);
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -271,6 +319,15 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
             <Button
               variant="outline"
               size="sm"
+              disabled={canPerformActions || isAnalyzing}
+              onClick={handleAnalyzeHistory}
+            >
+              {isAnalyzing ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Bot className="mr-2 size-4" />}
+              {isAnalyzing ? 'Analyzing...' : 'Analyze History'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               disabled={canPerformActions || isExporting}
               onClick={handleExportToCSV}
               className="text-muted-foreground"
@@ -332,8 +389,34 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
           </Table>
         </ScrollArea>
       </CardContent>
+
+      <Dialog open={isAnalysisDialogOpen} onOpenChange={setIsAnalysisDialogOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>AI-Powered Transaction Analysis</DialogTitle>
+            <DialogDescription>
+              The AI has analyzed the transaction history and generated the following report.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] mt-4">
+             <div className="prose prose-sm prose-neutral dark:prose-invert max-w-none pr-4">
+                <ReactMarkdown
+                    components={{
+                        h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4" {...props} />,
+                        h2: ({node, ...props}) => <h2 className="text-xl font-semibold mt-6 mb-3" {...props} />,
+                        h3: ({node, ...props}) => <h3 className="text-lg font-medium mt-4 mb-2" {...props} />,
+                        p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
+                        ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-4 space-y-2" {...props} />,
+                        li: ({node, ...props}) => <li className="pl-2" {...props} />,
+                        strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                    }}
+                >
+                    {analysisResult || 'No analysis available.'}
+                </ReactMarkdown>
+             </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
-
-    
