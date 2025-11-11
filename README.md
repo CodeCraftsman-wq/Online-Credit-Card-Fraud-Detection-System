@@ -10,6 +10,12 @@ The application features a dashboard with three main components:
 2.  **Real-time Prediction:** Upon submission, the transaction data is sent to a backend AI flow. The AI model analyzes the data and returns a prediction, indicating whether the transaction is likely fraudulent, along with a confidence score. This result is immediately displayed to the user.
 3.  **Transaction History:** All simulated transactions and their corresponding fraud predictions are logged in a table, allowing users to review past activity.
 
+## Project Scope
+
+The scope of the FraudShield project is to serve as a high-fidelity simulator for real-time fraud detection. The system's functionality is centered around a web-based dashboard where users can manually input transaction details for immediate analysis. The core feature is the use of a pre-trained Large Language Model (Google's Gemini) to perform a real-time prediction, which is instantly displayed to the user with a confidence score and a breakdown of risk factors. All simulated transactions and their predictions are logged to a Firestore database for session-specific history review. For demonstration purposes, the project also includes an AI-powered feature to generate synthetic sample transactions.
+
+Deliberately out of scope for this project are features such as custom machine learning model training, real user authentication and management (the login is a mock), integration with live financial data streams, batch processing of historical data files, and automated alerting to external services like email or SMS. The focus is strictly on demonstrating the analytical power of LLMs in a simulated but realistic environment.
+
 ## Technology Stack
 
 The project is built using a modern, robust, and scalable technology stack:
