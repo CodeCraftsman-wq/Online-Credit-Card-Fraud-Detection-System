@@ -2,7 +2,6 @@
 
 import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
 import { generateSyntheticTransactions } from '@/ai/flows/generate-synthetic-transactions';
-import { analyzeTransactionData } from '@/ai/flows/analyze-transaction-data';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
 
@@ -87,22 +86,5 @@ export async function sendFraudAlertEmail(
   } catch (e: any) {
     console.error('Failed to send alert email:', e);
     return { success: false, error: e.message || 'An unknown error occurred.' };
-  }
-}
-
-export async function analyzeTransactions(
-  transactions: Transaction[]
-): Promise<{ data: string | null; error: string | null }> {
-  if (!transactions || transactions.length === 0) {
-    return { data: null, error: 'There are no transactions to analyze.' };
-  }
-
-  try {
-    // Convert the array of objects to a JSON string for the AI flow.
-    const analysis = await analyzeTransactionData(transactions);
-    return { data: analysis, error: null };
-  } catch (e: any) {
-    console.error('Analysis failed:', e);
-    return { data: null, error: e.message || 'Failed to analyze transaction data.' };
   }
 }
