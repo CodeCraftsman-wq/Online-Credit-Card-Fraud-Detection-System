@@ -62,3 +62,29 @@ export async function generateAndPredictTransactions(
     return { data: null, error: e.message || 'Failed to generate synthetic data.' };
   }
 }
+
+const emailSchema = z.string().email('Please enter a valid email address.');
+
+export async function sendFraudAlertEmail(
+  email: string
+): Promise<{ success: boolean; error: string | null }> {
+  const validation = emailSchema.safeParse(email);
+  if (!validation.success) {
+    return { success: false, error: validation.error.errors.map(e => e.message).join(', ') };
+  }
+
+  try {
+    // In a real application, you would integrate an email service like SendGrid,
+    // Nodemailer, or a Firebase Extension (e.g., Trigger Email).
+    // For this demo, we will just log to the console to simulate the action.
+    console.log(`[SIMULATION] Sending fraud alert email to: ${validation.data}`);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return { success: true, error: null };
+  } catch (e: any) {
+    console.error('Failed to send alert email:', e);
+    return { success: false, error: e.message || 'An unknown error occurred.' };
+  }
+}

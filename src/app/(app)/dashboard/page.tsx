@@ -11,6 +11,7 @@ import { TransactionHistory } from '@/components/dashboard/transaction-history';
 import { cn } from '@/lib/utils';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import { Loader2 } from 'lucide-react';
+import { EmailAlertCard } from '@/components/dashboard/email-alert-card';
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -55,6 +56,7 @@ export default function DashboardPage() {
          <div className="mx-auto grid max-w-7xl auto-rows-max items-start gap-4 md:gap-8 lg:grid-cols-3">
            <div className={cn('grid gap-4 lg:col-span-1', animationClass('200ms'))}>
              <TransactionForm onNewTransaction={handleNewTransaction} userId={user.uid} />
+             <EmailAlertCard />
            </div>
            <div className={cn('grid gap-4 lg:col-span-2', animationClass('400ms'))}>
               <PredictionResult prediction={currentPrediction} />
