@@ -10,6 +10,16 @@ The application features a dashboard with three main components:
 2.  **Real-time Prediction:** Upon submission, the transaction data is sent to a backend AI flow. The AI model analyzes the data and returns a prediction, indicating whether the transaction is likely fraudulent, along with a confidence score. This result is immediately displayed to the user.
 3.  **Transaction History:** All simulated transactions and their corresponding fraud predictions are logged in a table, allowing users to review past activity.
 
+## Languages and Architecture (For Interviews)
+
+This project uses a modern, unified technology stack where both the frontend and backend are written in the same language.
+
+-   **Frontend Language**: **TypeScript**. The entire user interface is built with **React** using the **Next.js** framework. This provides a fast, modern user experience with server-side rendering for optimal performance. The styling is done with **Tailwind CSS**.
+
+-   **Backend Language**: **TypeScript**. The backend is also built with **Next.js** running on a **Node.js** environment. All server-side logic, including the API-like functions (Server Actions) and the integration with the AI model, is written in TypeScript.
+
+This full-stack TypeScript approach allows for seamless code sharing and a more consistent development process across the entire application.
+
 ## How the AI Fraud Analysis Works (For Interviews)
 
 This project does **not** involve traditional model training (e.g., training a classification model on a labeled dataset). Instead, it leverages a large language model (LLM) like Google's Gemini through a technique called **prompt engineering**.
