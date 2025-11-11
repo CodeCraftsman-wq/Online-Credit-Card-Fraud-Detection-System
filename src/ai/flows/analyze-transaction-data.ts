@@ -67,6 +67,8 @@ const analyzeTransactionDataFlow = ai.defineFlow(
     // Convert the array of transactions into a JSON string before passing it to the prompt.
     const transactionsJson = JSON.stringify(input, null, 2);
     const {output} = await analyzeTransactionDataPrompt({ transactionsJson });
-    return output!;
+    
+    // Ensure we always return a string to satisfy the schema.
+    return output || 'The AI did not generate an analysis for this data.';
   }
 );
