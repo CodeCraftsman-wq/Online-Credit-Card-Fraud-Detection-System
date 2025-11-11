@@ -101,3 +101,25 @@ The project is built using a modern, robust, and scalable technology stack:
     -   Merchant
     -   Time
 -   **5.4 Empty State:** If no transactions have been simulated, the table shall display a message indicating that it is empty.
+
+## Hardware & Software Requirements
+
+### For End-Users (Accessing the Application)
+
+-   **Hardware**:
+    -   A computer or mobile device with a stable internet connection.
+-   **Software**:
+    -   Any modern web browser (e.g., Google Chrome, Mozilla Firefox, Safari, Microsoft Edge).
+
+### For Development (Running the Project Locally)
+
+-   **Hardware**:
+    -   **Processor**: Dual-core processor or better.
+    -   **RAM**: 8 GB minimum, 16 GB recommended for a smoother experience.
+    -   **Storage**: 5 GB of free disk space for project files and dependencies.
+-   **Software**:
+    -   **Operating System**: Windows 10/11, macOS, or a modern Linux distribution.
+    -   **Node.js**: Version 18.x or 20.x recommended.
+    -   **Package Manager**: `npm` (comes with Node.js) or `yarn`.
+    -   **Code Editor**: A modern code editor like Visual Studio Code is recommended.
+    -   **Git**: For version control.
