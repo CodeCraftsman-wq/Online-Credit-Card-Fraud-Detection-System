@@ -13,6 +13,7 @@ import {
   SidebarInset,
   SidebarFooter,
   SidebarTrigger,
+  SidebarRail
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Home, LogOut } from 'lucide-react';
@@ -56,6 +57,7 @@ export default function AppLayout({
   return (
     <SidebarProvider>
       <Sidebar>
+        <SidebarRail />
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
@@ -86,7 +88,7 @@ export default function AppLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/60 px-4 backdrop-blur-xl sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/60 px-4 backdrop-blur-xl sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 md:justify-end">
             <SidebarTrigger className="md:hidden" />
             <div></div>
         </header>
