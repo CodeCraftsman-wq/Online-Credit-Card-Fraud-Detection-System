@@ -45,6 +45,16 @@ const tech = [
   { name: 'TypeScript', Icon: TypeScriptLogo },
 ]
 
+function LoadingDots() {
+    return (
+      <div className="flex items-center justify-center gap-1">
+        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current [animation-delay:-0.3s]"></div>
+        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current [animation-delay:-0.15s]"></div>
+        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current"></div>
+      </div>
+    );
+}
+
 function LoginPageContent() {
   const router = useRouter();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -68,7 +78,7 @@ function LoginPageContent() {
     // For this demo, we'll just navigate to the dashboard after a short delay.
     setTimeout(() => {
       router.push('/dashboard');
-    }, 500);
+    }, 1500);
   }
 
   const animationClass = (delay: string) =>
@@ -145,9 +155,9 @@ function LoginPageContent() {
                     disabled={isLoggingIn}
                   >
                     {isLoggingIn && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <LoadingDots />
                     )}
-                    {isLoggingIn ? 'Logging in...' : 'Log In'}
+                    {isLoggingIn ? 'Signing in' : 'Log In'}
                   </Button>
                 </div>
               </form>
