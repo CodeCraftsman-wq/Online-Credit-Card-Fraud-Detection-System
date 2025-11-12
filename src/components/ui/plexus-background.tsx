@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useRef, useEffect } from 'react';
@@ -31,7 +30,10 @@ export const PlexusBackground: React.FC<GridBackgroundProps> = ({
 
     let animationFrameId: number;
 
-    const dotColor = customDotColor || (theme === 'dark' ? 'hsla(217, 91%, 60%, 0.3)' : 'hsla(221, 83%, 53%, 0.3)');
+    const isDark = theme === 'dark';
+    const baseDotColor = customDotColor || (isDark ? 'hsla(210, 100%, 75%, 0.2)' : 'hsla(221, 83%, 53%, 0.3)');
+    const highlightColor = isDark ? 'hsla(210, 100%, 75%, 0.8)' : 'hsla(221, 83%, 53%, 0.8)';
+
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -58,22 +60,40 @@ export const PlexusBackground: React.FC<GridBackgroundProps> = ({
           const pulseFactor = Math.sin(time * 5 + x * 0.01 + y * 0.01) * 0.2 + 0.8;
           
           let size = dotSize;
-          let opacity = 0.5;
+          let color = baseDotColor;
 
           if (dist < maxDist) {
             const proximity = (maxDist - dist) / maxDist;
             size = dotSize + proximity * 2;
-            opacity = 0.5 + proximity * 0.5;
+            
+            // Interpolate color towards the highlight color
+            const r1 = parseInt(baseDotColor.slice(5, 8));
+            const g1 = parseInt(baseDotColor.slice(9, 12));
+            const b1 = parseInt(baseDotColor.slice(13, 16));
+            const a1 = parseFloat(baseDotColor.slice(17, 21));
+
+            const r2 = parseInt(highlightColor.slice(5, 8));
+            const g2 = parseInt(highlightColor.slice(9, 12));
+            const b2 = parseInt(highlightColor.slice(13, 16));
+            const a2 = parseFloat(highlightColor.slice(17, 21));
+
+            const r = Math.floor(r1 + (r2 - r1) * proximity);
+            const g = Math.floor(g1 + (g2 - g1) * proximity);
+            const b = Math.floor(b1 + (b2 - b1) * proximity);
+            const a = a1 + (a2 - a1) * proximity;
+            
+            color = `hsla(${isDark ? 210 : 221}, ${isDark ? '100%' : '83%'}, ${isDark ? '75%' : '53%'}, ${a})`;
+
+          } else {
+             color = baseDotColor;
           }
 
           ctx.beginPath();
           ctx.arc(x, y, size * pulseFactor, 0, Math.PI * 2);
-          ctx.fillStyle = dotColor;
-          ctx.globalAlpha = opacity * pulseFactor;
+          ctx.fillStyle = color;
           ctx.fill();
         }
       }
-      ctx.globalAlpha = 1;
     };
     
     const animate = () => {
