@@ -45,18 +45,19 @@ const tech = [
   { name: 'TypeScript', Icon: TypeScriptLogo },
 ]
 
-function ThreeDotsLoader() {
+function WindowsSpinner() {
   return (
-    <div className="flex space-x-1">
-      <div className="size-1.5 rounded-full bg-current animate-bounce" />
-      <div
-        className="size-1.5 rounded-full bg-current animate-bounce"
-        style={{ animationDelay: '0.2s' }}
-      />
-      <div
-        className="size-1.5 rounded-full bg-current animate-bounce"
-        style={{ animationDelay: '0.4s' }}
-      />
+    <div className="relative size-5 animate-spinner-ease">
+      {[...Array(5)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-1/2 size-[3px] rounded-full bg-current"
+          style={{
+            animationDelay: `${i * 100}ms`,
+            transform: `rotate(${i * 36}deg) translate(8px)`,
+          }}
+        />
+      ))}
     </div>
   );
 }
@@ -160,9 +161,9 @@ function LoginPageContent() {
                     className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out active:scale-95 active:opacity-75 hover:opacity-90"
                     disabled={isLoggingIn}
                   >
-                    {isLoggingIn && (
-                      <ThreeDotsLoader />
-                    )}
+                    {isLoggingIn ? (
+                      <WindowsSpinner />
+                    ) : null}
                     {isLoggingIn ? 'Signing in' : 'Log In'}
                   </Button>
                 </div>

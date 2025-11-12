@@ -152,15 +152,9 @@ export default {
             transform: 'rotate(360deg)',
           },
         },
-        'bounce': {
-          '0%, 100%': {
-            transform: 'translateY(0)',
-            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
-          },
-          '50%': {
-            transform: 'translateY(-25%)',
-            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
-          },
+        'spinner-ease': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         },
       },
       animation: {
@@ -171,7 +165,7 @@ export default {
         'row-in': 'row-in 0.75s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
-        'bounce': 'bounce 1s infinite',
+        'spinner-ease': 'spinner-ease 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
     },
   },
