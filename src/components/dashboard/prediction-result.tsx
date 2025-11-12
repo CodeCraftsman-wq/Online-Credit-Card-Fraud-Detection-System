@@ -14,10 +14,6 @@ import { ShieldAlert, ShieldCheck, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
 
-interface PredictionResultProps {
-  prediction: FraudPredictionOutput | null;
-}
-
 function useTypingAnimation(text: string, speed = 30) {
   const [animatedText, setAnimatedText] = useState('');
 
@@ -78,8 +74,8 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
     },
     legitimate: {
       Icon: ShieldCheck,
-      title: 'Transaction appears Legitimate',
-      description: 'This transaction seems normal.',
+      title: 'Transaction Appears Legitimate',
+      description: 'The transaction amount, time, and location are all consistent with typical, low-risk activity, with no immediate red flags identified.',
       colorClass: 'text-green-500',
       progressClass: 'bg-green-500',
     },
@@ -136,8 +132,9 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
                     {reasoning && (
                       <div className='space-y-2 text-left p-3 bg-card/50 rounded-lg min-h-[5rem]'>
                         <h4 className='font-medium text-sm'>AI Reasoning</h4>
-                        <p className='text-sm text-muted-foreground'>
-                          {animatedReasoning}<span className="inline-block w-1 h-4 bg-primary animate-pulse ml-1"></span>
+                        <p className='text-sm text-muted-foreground font-sans'>
+                          {animatedReasoning}
+                          { animatedReasoning.length === reasoning.length ? null : <span className="inline-block w-1 h-4 bg-primary animate-pulse ml-1"></span>}
                         </p>
                       </div>
                     )}
