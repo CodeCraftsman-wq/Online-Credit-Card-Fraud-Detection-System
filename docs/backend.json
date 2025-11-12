@@ -61,6 +61,10 @@
           "type": "string",
           "description": "The credit card number used for the transaction."
         },
+        "cvv": {
+          "type": "string",
+          "description": "The 3 or 4-digit card security code."
+        },
         "fraudulent": {
           "type": "boolean",
           "description": "Indicates whether the transaction is predicted as fraudulent."
@@ -78,6 +82,7 @@
         "location",
         "merchantDetails",
         "cardNumber",
+        "cvv",
         "fraudulent",
         "confidenceScore"
       ]

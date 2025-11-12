@@ -16,6 +16,7 @@ const FraudPredictionInputSchema = z.object({
   location: z.string().describe('The transaction location.'),
   merchantDetails: z.string().describe('Details of the merchant.'),
   cardNumber: z.string().describe('The credit card number used for the transaction. This is a critical piece of information for fraud analysis.'),
+  cvv: z.string().describe('The 3 or 4-digit card security code (CVV).'),
 });
 export type FraudPredictionInput = z.infer<typeof FraudPredictionInputSchema>;
 
@@ -46,8 +47,10 @@ Analyze the following transaction details based on common fraud indicators:
 - High-risk locations (e.g., international or known high-fraud regions).
 - Vague or suspicious merchant details (e.g., "Unknown Vendor", "Quick Cash").
 - Card number patterns (e.g., new vs. known card, velocity of use).
+- The CVV is also provided for context, but do not base your decision solely on its presence.
 
 Card Number: {{{cardNumber}}}
+CVV: {{{cvv}}}
 Transaction Amount: {{{amount}}} INR
 Transaction Time: {{{time}}}
 Transaction Location: {{{location}}}

@@ -18,6 +18,7 @@ const TransactionSchema = z.object({
   location: z.string(),
   merchantDetails: z.string(),
   cardNumber: z.string().describe('A realistic, 16-digit credit card number string.'),
+  cvv: z.string().length(3).describe('A realistic, 3-digit CVV string.'),
 });
 
 const GenerateTransactionsInputSchema = z.object({
@@ -49,7 +50,10 @@ const prompt = ai.definePrompt({
   prompt: `You are a data scientist creating a test dataset for a fraud detection system.
 Your task is to generate a list of {{{count}}} synthetic transactions.
 
-Each transaction MUST include a realistic, 16-digit credit card number. Ensure the numbers you generate are varied.
+Each transaction MUST include:
+- A realistic, 16-digit credit card number. Ensure the numbers you generate are varied.
+- A realistic, 3-digit CVV.
+
 The data should be realistic and include a mix of both clearly legitimate transactions and transactions with suspicious characteristics.
 Suspicious characteristics can include:
 - Very high amounts (e.g., > 80000 INR).

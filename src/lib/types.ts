@@ -7,6 +7,7 @@ export interface TransactionInput {
   location: string;
   merchantDetails: string;
   cardNumber: string;
+  cvv: string;
 }
 
 export interface Transaction extends TransactionInput {

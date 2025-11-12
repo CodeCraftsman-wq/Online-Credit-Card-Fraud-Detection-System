@@ -23,7 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { IndianRupee, Clock, Hash, Loader2, MapPin, Sparkles, Store } from 'lucide-react';
+import { IndianRupee, Clock, Hash, Loader2, MapPin, Sparkles, Store, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -43,6 +43,7 @@ const formSchema = z.object({
     .min(13, 'Card number must be between 13 and 19 digits.')
     .max(19, 'Card number must be between 13 and 19 digits.')
     .refine(luhnCheck, 'The card number is not valid.'),
+  cvv: z.string().min(3, 'CVV must be 3 or 4 digits.').max(4, 'CVV must be 3 or 4 digits.'),
 });
 
 type TransactionFormValues = z.infer<typeof formSchema>;
@@ -67,6 +68,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       location: 'Mumbai, India',
       merchantDetails: 'Online Store',
       cardNumber: '',
+      cvv: '',
     },
   });
 
@@ -127,6 +129,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       amount: Math.floor(Math.random() * 99000) + 1000,
       time: new Date().toISOString().slice(0, 16),
       cardNumber: '',
+      cvv: '',
     });
 
     setIsSubmitting(false);
@@ -180,19 +183,47 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="cardNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Card Number</FormLabel>
-                  <FormControl>
-                    <CardInput field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2">
+                <FormField
+                  control={form.control}
+                  name="cardNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Card Number</FormLabel>
+                      <FormControl>
+                        <CardInput field={field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="col-span-1">
+                 <FormField
+                    control={form.control}
+                    name="cvv"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CVV</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                            <Input
+                              type="password"
+                              placeholder="123"
+                              maxLength={4}
+                              className="pl-10"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+              </div>
+            </div>
              <FormField
               control={form.control}
               name="id"

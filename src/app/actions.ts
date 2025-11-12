@@ -15,6 +15,7 @@ const transactionInputSchema = z.object({
     .min(13, 'Card number must be between 13 and 19 digits.')
     .max(19, 'Card number must be between 13 and 19 digits.')
     .refine(luhnCheck, 'The card number is not valid.'),
+  cvv: z.string().min(3, 'CVV must be 3 or 4 digits.').max(4, 'CVV must be 3 or 4 digits.'),
 });
 
 export async function simulateAndPredictTransaction(
@@ -49,10 +50,15 @@ export async function generateAndPredictTransactions(
 
     for (const txInput of generatedTransactions) {
       try {
-        const prediction = await predictFraud(txInput);
+        // The generated data doesn't include a CVV, so we add a mock one.
+        const fullTxInput = {
+          ...txInput,
+          cvv: (Math.floor(Math.random() * 900) + 100).toString(),
+        };
+        const prediction = await predictFraud(fullTxInput);
         transactionsWithPredictions.push({
           id: `txn-${crypto.randomUUID().slice(0, 8)}`,
-          ...txInput,
+          ...fullTxInput,
           prediction,
         });
       } catch (e) {
