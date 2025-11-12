@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import { Loader2 } from 'lucide-react';
 import { EmailAlertCard } from '@/components/dashboard/email-alert-card';
+import { SystemStatsWidget } from '@/components/dashboard/system-stats-widget';
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -55,6 +56,7 @@ export default function DashboardPage() {
        <div className="relative p-4 md:p-6 lg:p-8">
          <div className="mx-auto grid max-w-7xl grid-cols-1 auto-rows-max items-start gap-4 md:gap-8 lg:grid-cols-3">
             <div className={cn("grid gap-4 auto-rows-max lg:col-span-1", animationClass('200ms'))}>
+              <SystemStatsWidget userId={user.uid} />
               <TransactionForm onNewTransaction={handleNewTransaction} userId={user.uid} />
               <EmailAlertCard />
             </div>
