@@ -79,7 +79,7 @@ export default function AppLayout({
 }>) {
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-xl md:px-6">
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/60 px-4 backdrop-blur-lg md:px-6">
         <div className="flex w-full items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Logo />
