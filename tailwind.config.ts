@@ -196,6 +196,13 @@ export default {
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography'), 
   function ({ addUtilities }: { addUtilities: any }) {
       addUtilities({
+        '.glowing-border': {
+            '@apply relative overflow-hidden rounded-lg p-px': {},
+        },
+        '.glowing-border::before': {
+            content: "''",
+            '@apply absolute inset-[-200%] animate-spin-slow bg-[conic-gradient(from_90deg_at_50%_50%,hsl(var(--primary))_0%,hsl(var(--secondary))_50%,hsl(var(--primary))_100%)] z-[-1]': {},
+        },
         '.transform-style-3d': {
           'transform-style': 'preserve-3d',
         },
