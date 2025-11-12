@@ -3,11 +3,17 @@
 
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
-import { LogOut } from 'lucide-react';
+import { LogOut, User as UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/firebase';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
 function LogoutButton() {
   const router = useRouter();
@@ -36,6 +42,37 @@ function LogoutButton() {
   );
 }
 
+function UserDisplay() {
+  const { user, isUserLoading } = useUser();
+
+  if (isUserLoading) {
+    return null; // Or a loading skeleton
+  }
+
+  // The login is a mock, so the user object will be from anonymous sign-in
+  // or a hardcoded one. We'll display a generic email.
+  const displayEmail = user?.isAnonymous ? 'anonymous.user@fraudshield.io' : (user?.email || 'user@example.com');
+  const userInitial = displayEmail ? displayEmail.charAt(0).toUpperCase() : '?';
+
+
+  return (
+    <div className="flex items-center gap-3">
+       <div className="flex items-center gap-2 text-sm text-muted-foreground">
+         <Avatar className="size-8 border">
+            { user?.photoURL && <AvatarImage src={user.photoURL} alt="User avatar" /> }
+            <AvatarFallback>
+              <span className='sr-only'>{displayEmail}</span>
+              {userInitial}
+            </AvatarFallback>
+         </Avatar>
+         <span className="hidden md:inline">{displayEmail}</span>
+      </div>
+      <ThemeToggle />
+      <LogoutButton />
+    </div>
+  );
+}
+
 export default function AppLayout({
   children,
 }: Readonly<{
@@ -49,10 +86,7 @@ export default function AppLayout({
             <Logo />
             <span className="text-lg font-semibold">FraudShield</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <LogoutButton />
-          </div>
+          <UserDisplay />
         </nav>
       </header>
       {children}
