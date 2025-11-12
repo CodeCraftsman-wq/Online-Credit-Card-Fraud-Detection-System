@@ -30,7 +30,6 @@ import { TypeScriptLogo } from '@/components/typescript-logo';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { FraudAlertTicker } from '@/components/login/fraud-alert-ticker';
 
 
 const formSchema = z.object({
@@ -174,11 +173,10 @@ function LoginPageContent() {
       </div>
       <div
         className={cn(
-          "absolute bottom-4 w-full px-4 space-y-4 text-center text-xs text-muted-foreground",
+          "absolute bottom-4 w-full space-y-4 text-center text-xs text-muted-foreground",
           animationClass('900ms')
         )}
       >
-        <FraudAlertTicker />
         <div className='space-y-2 pt-4'>
           <p>&copy; {new Date().getFullYear()} Made by Agnik Konar</p>
         </div>

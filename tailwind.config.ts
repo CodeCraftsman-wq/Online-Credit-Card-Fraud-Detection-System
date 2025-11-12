@@ -174,10 +174,6 @@ export default {
             opacity: '0',
           },
         },
-        'marquee': {
-          '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' },
-        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -188,7 +184,6 @@ export default {
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
         'spinner-ease': 'spinner-ease 2.5s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'marquee': 'marquee 40s linear infinite',
       },
       transformStyle: {
         '3d': 'preserve-3d',
