@@ -23,7 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Banknote, Clock, Hash, Loader2, MapPin, Sparkles, Store } from 'lucide-react';
+import { IndianRupee, Clock, Hash, Loader2, MapPin, Sparkles, Store } from 'lucide-react';
 import { useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -221,7 +221,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
                   <FormLabel>Amount (INR)</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                       <Input
                         type="number"
                         placeholder="1000"
