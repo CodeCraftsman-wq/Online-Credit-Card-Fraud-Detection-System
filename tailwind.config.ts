@@ -156,6 +156,24 @@ export default {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        'spinner-dot-fade': {
+          '0%': {
+            transform: 'scale(0.1)',
+            opacity: '0',
+          },
+          '39%': {
+            transform: 'scale(1)',
+            opacity: '1',
+          },
+          '40%': {
+            transform: 'scale(1)',
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'scale(0.1)',
+            opacity: '0',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -165,7 +183,7 @@ export default {
         'row-in': 'row-in 0.75s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
-        'spinner-ease': 'spinner-ease 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'spinner-ease': 'spinner-ease 2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
       },
     },
   },

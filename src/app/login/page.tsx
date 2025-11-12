@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -53,6 +51,7 @@ function WindowsSpinner() {
           key={i}
           className="absolute left-1/2 top-1/2 size-[3px] rounded-full bg-current"
           style={{
+            animation: `spinner-dot-fade 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite`,
             animationDelay: `${i * 100}ms`,
             transform: `rotate(${i * 36}deg) translate(8px)`,
           }}
@@ -85,7 +84,7 @@ function LoginPageContent() {
     // For this demo, we'll just navigate to the dashboard after a short delay.
     setTimeout(() => {
       router.push('/dashboard');
-    }, 1500);
+    }, 2500);
   }
 
   const animationClass = (delay: string) =>
