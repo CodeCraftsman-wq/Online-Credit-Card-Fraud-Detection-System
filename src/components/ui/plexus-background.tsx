@@ -5,29 +5,22 @@ import React, { useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
-interface PlexusBackgroundProps extends React.HTMLAttributes<HTMLCanvasElement> {
-  particleColor?: string;
-  lineColor?: string;
-  particleAmount?: number;
-  defaultSpeed?: number;
-  interactive?: boolean;
-  minDistance?: number;
-  glowing?: boolean;
+interface GridBackgroundProps extends React.HTMLAttributes<HTMLCanvasElement> {
+  dotColor?: string;
+  dotSize?: number;
+  spacing?: number;
 }
 
-export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
+export const PlexusBackground: React.FC<GridBackgroundProps> = ({
   className,
-  particleColor: customParticleColor,
-  lineColor: customLineColor,
-  particleAmount = 50,
-  defaultSpeed = 0.5,
-  interactive = true,
-  minDistance = 120,
-  glowing = true,
+  dotColor: customDotColor,
+  dotSize = 1,
+  spacing = 35,
   ...props
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { theme } = useTheme();
+  const mousePosition = useRef({ x: -1000, y: -1000 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,92 +29,69 @@ export const PlexusBackground: React.FC<PlexusBackgroundProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let particles: Particle[] = [];
-    const mouse = { x: -9999, y: -9999 };
+    let animationFrameId: number;
 
-    const particleColor = customParticleColor || (theme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)');
-    const lineColor = customLineColor || (theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)');
+    const dotColor = customDotColor || (theme === 'dark' ? 'hsla(217, 91%, 60%, 0.3)' : 'hsla(221, 83%, 53%, 0.3)');
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      createParticles();
-    };
-
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * defaultSpeed;
-        this.vy = (Math.random() - 0.5) * defaultSpeed;
-        this.radius = Math.random() * 1.5 + 1;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-      }
-
-      draw() {
-        if(!ctx) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = particleColor;
-        
-        if (glowing) {
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = particleColor;
-        }
-        ctx.fill();
-      }
-    }
-
-    const createParticles = () => {
-      particles = [];
-      for (let i = 0; i < particleAmount; i++) {
-        particles.push(new Particle());
-      }
-    };
-
-    const animate = () => {
-      if(!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animate);
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
+      mousePosition.current = { x: event.clientX, y: event.clientY };
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+
+    const drawGrid = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const time = Date.now() * 0.0001;
+
+      for (let x = 0; x < canvas.width; x += spacing) {
+        for (let y = 0; y < canvas.height; y += spacing) {
+          const dx = mousePosition.current.x - x;
+          const dy = mousePosition.current.y - y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          const maxDist = 250;
+          const pulseFactor = Math.sin(time * 5 + x * 0.01 + y * 0.01) * 0.2 + 0.8;
+          
+          let size = dotSize;
+          let opacity = 0.5;
+
+          if (dist < maxDist) {
+            const proximity = (maxDist - dist) / maxDist;
+            size = dotSize + proximity * 2;
+            opacity = 0.5 + proximity * 0.5;
+          }
+
+          ctx.beginPath();
+          ctx.arc(x, y, size * pulseFactor, 0, Math.PI * 2);
+          ctx.fillStyle = dotColor;
+          ctx.globalAlpha = opacity * pulseFactor;
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+    
+    const animate = () => {
+        drawGrid();
+        animationFrameId = requestAnimationFrame(animate);
     }
 
     resizeCanvas();
     animate();
-
+    
     window.addEventListener('resize', resizeCanvas);
-    if (interactive) {
-        window.addEventListener('mousemove', handleMouseMove);
-    }
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-       if (interactive) {
-        window.removeEventListener('mousemove', handleMouseMove);
-      }
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [theme, particleAmount, defaultSpeed, interactive, minDistance, customParticleColor, customLineColor, glowing]);
+  }, [theme, dotSize, spacing, customDotColor]);
 
-  return <canvas ref={canvasRef} className={cn("fixed top-0 left-0 -z-10", className)} {...props} />;
+  return <canvas ref={canvasRef} className={cn("fixed top-0 left-0 -z-10 bg-transparent", className)} {...props} />;
 };
