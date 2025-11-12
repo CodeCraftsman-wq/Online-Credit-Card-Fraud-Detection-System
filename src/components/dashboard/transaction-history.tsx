@@ -137,7 +137,7 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
             key={tx.id}
             className={cn(
                 'border-b-white/5',
-                 index === 0 && transactions.length > 1 && 'animate-highlight'
+                 index === 0 && transactions.length > 1 && 'animate-row-in'
             )}
         >
           <TableCell>

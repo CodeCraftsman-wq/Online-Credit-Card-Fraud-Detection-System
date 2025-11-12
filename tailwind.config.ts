@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -108,11 +109,15 @@ export default {
             transform: 'translateY(0)',
           },
         },
-        highlight: {
+        'row-in': {
           '0%': {
+            opacity: '0',
+            transform: 'translateY(-10px) scale(0.98)',
             backgroundColor: 'hsl(var(--accent) / 0.2)',
           },
           '100%': {
+            opacity: '1',
+            transform: 'translateY(0) scale(1)',
             backgroundColor: 'transparent',
           },
         },
@@ -147,7 +152,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in-up': 'fade-in-up 0.5s ease-out',
         'fade-in-down': 'fade-in-down 0.5s ease-out',
-        highlight: 'highlight 1.5s ease-out',
+        'row-in': 'row-in 0.75s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
       },
