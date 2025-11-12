@@ -11,6 +11,8 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarFooter,
+  SidebarTrigger,
+  SidebarRail,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Home, LogOut } from 'lucide-react';
@@ -63,6 +65,7 @@ export default function AppLayout({
   return (
     <SidebarProvider>
       <Sidebar>
+        <SidebarRail />
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
@@ -92,7 +95,15 @@ export default function AppLayout({
             </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <header className="flex h-12 items-center gap-2 border-b bg-background/80 backdrop-blur-xl p-2 sticky top-0 z-10">
+          <SidebarTrigger className="md:hidden" />
+          <div className="flex-1">
+            {/* Header Content can go here */}
+          </div>
+        </header>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }
