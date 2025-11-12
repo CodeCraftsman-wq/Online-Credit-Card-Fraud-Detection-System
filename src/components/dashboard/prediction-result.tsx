@@ -41,7 +41,7 @@ function useTypingAnimation(text: string, speed = 30) {
 }
 
 
-export function PredictionResult({ prediction }: PredictionResultProps) {
+export function PredictionResult({ prediction }: { prediction: FraudPredictionOutput | null }) {
   const isFraudulent = prediction?.isFraudulent;
   const confidence = (prediction?.confidenceScore ?? 0) * 100;
   const reasoning = prediction?.reasoning ?? '';
