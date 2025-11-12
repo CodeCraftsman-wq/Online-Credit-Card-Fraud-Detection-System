@@ -15,6 +15,7 @@ const FraudPredictionInputSchema = z.object({
   time: z.string().describe('The transaction time as a string.'),
   location: z.string().describe('The transaction location.'),
   merchantDetails: z.string().describe('Details of the merchant.'),
+  cardNumber: z.string().describe('The credit card number used for the transaction. This is a critical piece of information for fraud analysis.'),
 });
 export type FraudPredictionInput = z.infer<typeof FraudPredictionInputSchema>;
 
@@ -44,7 +45,9 @@ Analyze the following transaction details based on common fraud indicators:
 - Unusual transaction times (e.g., 1 AM - 6 AM is higher risk).
 - High-risk locations (e.g., international or known high-fraud regions).
 - Vague or suspicious merchant details (e.g., "Unknown Vendor", "Quick Cash").
+- Card number patterns (e.g., new vs. known card, velocity of use).
 
+Card Number: {{{cardNumber}}}
 Transaction Amount: {{{amount}}} INR
 Transaction Time: {{{time}}}
 Transaction Location: {{{location}}}

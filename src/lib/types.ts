@@ -6,6 +6,7 @@ export interface TransactionInput {
   time: string;
   location: string;
   merchantDetails: string;
+  cardNumber: string;
 }
 
 export interface Transaction extends TransactionInput {

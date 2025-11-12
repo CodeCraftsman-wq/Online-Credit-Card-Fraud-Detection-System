@@ -57,6 +57,10 @@
           "type": "string",
           "description": "Details of the merchant involved in the transaction."
         },
+        "cardNumber": {
+          "type": "string",
+          "description": "The credit card number used for the transaction."
+        },
         "fraudulent": {
           "type": "boolean",
           "description": "Indicates whether the transaction is predicted as fraudulent."
@@ -73,6 +77,7 @@
         "time",
         "location",
         "merchantDetails",
+        "cardNumber",
         "fraudulent",
         "confidenceScore"
       ]

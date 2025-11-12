@@ -4,12 +4,17 @@ import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
 import { generateSyntheticTransactions } from '@/ai/flows/generate-synthetic-transactions';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
+import { luhnCheck } from '@/lib/utils';
 
 const transactionInputSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive.'),
   time: z.string().min(1, 'Time is required.'),
   location: z.string().min(1, 'Location is required.'),
   merchantDetails: z.string().min(1, 'Merchant details are required.'),
+  cardNumber: z.string()
+    .min(13, 'Card number must be between 13 and 19 digits.')
+    .max(19, 'Card number must be between 13 and 19 digits.')
+    .refine(luhnCheck, 'The card number is not valid.'),
 });
 
 export async function simulateAndPredictTransaction(

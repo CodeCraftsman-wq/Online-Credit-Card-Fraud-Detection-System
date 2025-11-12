@@ -30,6 +30,8 @@ import { doc, setDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { Separator } from '../ui/separator';
+import { luhnCheck } from '@/lib/utils';
+import { CardInput } from './card-input';
 
 const formSchema = z.object({
   id: z.string().min(1, 'Transaction ID is required.'),
@@ -37,6 +39,10 @@ const formSchema = z.object({
   time: z.string().min(1, 'Time is required.'),
   location: z.string().min(2, 'Location is required.'),
   merchantDetails: z.string().min(2, 'Merchant details are required.'),
+  cardNumber: z.string()
+    .min(13, 'Card number must be between 13 and 19 digits.')
+    .max(19, 'Card number must be between 13 and 19 digits.')
+    .refine(luhnCheck, 'The card number is not valid.'),
 });
 
 type TransactionFormValues = z.infer<typeof formSchema>;
@@ -60,6 +66,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       time: new Date().toISOString().slice(0, 16),
       location: 'Mumbai, India',
       merchantDetails: 'Online Store',
+      cardNumber: '',
     },
   });
 
@@ -119,6 +126,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       id: `txn-${crypto.randomUUID().slice(0, 8)}`,
       amount: Math.floor(Math.random() * 99000) + 1000,
       time: new Date().toISOString().slice(0, 16),
+      cardNumber: '',
     });
 
     setIsSubmitting(false);
@@ -172,6 +180,19 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="cardNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Card Number</FormLabel>
+                  <FormControl>
+                    <CardInput field={field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
              <FormField
               control={form.control}
               name="id"

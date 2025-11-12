@@ -183,9 +183,29 @@ export default {
         'row-in': 'row-in 0.75s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
-        'spinner-ease': 'spinner-ease 2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'spinner-ease': 'spinner-ease 2.5s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+      },
+      transformStyle: {
+        '3d': 'preserve-3d',
+      },
+      backfaceVisibility: {
+        hidden: 'hidden',
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography'), 
+  function ({ addUtilities }: { addUtilities: any }) {
+      addUtilities({
+        '.transform-style-3d': {
+          'transform-style': 'preserve-3d',
+        },
+        '.backface-hidden': {
+          'backface-visibility': 'hidden',
+        },
+        '.rotate-y-180': {
+          transform: 'rotateY(180deg)',
+        },
+      });
+    },
+  ],
 } satisfies Config;

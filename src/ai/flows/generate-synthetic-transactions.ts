@@ -8,7 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 // Defines the shape of a single transaction for generation purposes.
 // It excludes fields that will be added later (like id, userId, prediction).
@@ -17,6 +17,7 @@ const TransactionSchema = z.object({
   time: z.string(),
   location: z.string(),
   merchantDetails: z.string(),
+  cardNumber: z.string().describe('A realistic, 16-digit credit card number string.'),
 });
 
 const GenerateTransactionsInputSchema = z.object({
@@ -48,13 +49,14 @@ const prompt = ai.definePrompt({
   prompt: `You are a data scientist creating a test dataset for a fraud detection system.
 Your task is to generate a list of {{{count}}} synthetic transactions.
 
+Each transaction MUST include a realistic, 16-digit credit card number. Ensure the numbers you generate are varied.
 The data should be realistic and include a mix of both clearly legitimate transactions and transactions with suspicious characteristics.
 Suspicious characteristics can include:
 - Very high amounts (e.g., > 80000 INR).
 - Transactions at odd hours (e.g., between 1 AM and 5 AM).
 - Vague merchant details (e.g., "Cash Withdrawal", "Gift Card Purchase").
 - International locations.
-- Multiple transactions in different cities in a short period.
+- Multiple transactions from the same card in different cities in a short period.
 
 Generate a diverse set of transactions. For the time, use a realistic ISO 8601 format string.
 `,
