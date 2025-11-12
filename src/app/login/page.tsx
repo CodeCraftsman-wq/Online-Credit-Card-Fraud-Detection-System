@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -24,7 +25,6 @@ import {
 } from '@/components/ui/card';
 import { Logo } from '@/components/logo';
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NextJsLogo } from '@/components/nextjs-logo';
 import { ReactLogo } from '@/components/react-logo';
@@ -45,29 +45,17 @@ const tech = [
   { name: 'TypeScript', Icon: TypeScriptLogo },
 ]
 
-function WindowsSpinner() {
+function ThreeDotsLoader() {
   return (
-    <div className="relative size-5 animate-spinner-ease">
-      <div className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow" />
+    <div className="flex space-x-1">
+      <div className="size-1.5 rounded-full bg-current animate-bounce" />
       <div
-        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
-        style={{ animationDelay: '125ms' }}
+        className="size-1.5 rounded-full bg-current animate-bounce"
+        style={{ animationDelay: '0.2s' }}
       />
       <div
-        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
-        style={{ animationDelay: '250ms' }}
-      />
-      <div
-        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
-        style={{ animationDelay: '375ms' }}
-      />
-      <div
-        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
-        style={{ animationDelay: '500ms' }}
-      />
-      <div
-        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
-        style={{ animationDelay: '625ms' }}
+        className="size-1.5 rounded-full bg-current animate-bounce"
+        style={{ animationDelay: '0.4s' }}
       />
     </div>
   );
@@ -173,7 +161,7 @@ function LoginPageContent() {
                     disabled={isLoggingIn}
                   >
                     {isLoggingIn && (
-                      <WindowsSpinner />
+                      <ThreeDotsLoader />
                     )}
                     {isLoggingIn ? 'Signing in' : 'Log In'}
                   </Button>
