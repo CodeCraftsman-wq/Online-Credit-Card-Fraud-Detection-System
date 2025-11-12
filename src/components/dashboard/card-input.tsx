@@ -5,27 +5,6 @@ import { Input } from '@/components/ui/input';
 import { CreditCard, CheckCircle2 } from 'lucide-react';
 import { cn, luhnCheck } from '@/lib/utils';
 import { useFormField } from '@/components/ui/form';
-import Image from 'next/image';
-
-const cardBrands = {
-  visa: { regex: /^4/, logo: '/cards/visa.svg' },
-  mastercard: { regex: /^5[1-5]/, logo: '/cards/mastercard.svg' },
-  amex: { regex: /^3[47]/, logo: '/cards/amex.svg' },
-  discover: { regex: /^6(?:011|5)/, logo: '/cards/discover.svg' },
-  diners: { regex: /^3(?:0[0-5]|[68])/, logo: '/cards/diners.svg' },
-  jcb: { regex: /^(?:2131|1800|35)/, logo: '/cards/jcb.svg' },
-};
-
-type CardBrand = keyof typeof cardBrands;
-
-function getCardBrand(cardNumber: string): CardBrand | null {
-  for (const brand in cardBrands) {
-    if (cardBrands[brand as CardBrand].regex.test(cardNumber)) {
-      return brand as CardBrand;
-    }
-  }
-  return null;
-}
 
 const formatCardNumber = (value: string) => {
   const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -49,7 +28,6 @@ export function CardInput({ field }: CardInputProps) {
   const { error } = useFormField();
   const [cardValue, setCardValue] = useState(field.value || '');
 
-  const cardBrand = useMemo(() => getCardBrand(cardValue.replace(/\s/g, '')), [cardValue]);
   const isValid = useMemo(() => luhnCheck(cardValue.replace(/\s/g, '')), [cardValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,32 +36,10 @@ export function CardInput({ field }: CardInputProps) {
     field.onChange(formattedValue.replace(/\s/g, ''));
   };
   
-  const brandLogo = cardBrand ? cardBrands[cardBrand].logo : null;
-
   return (
     <div className="relative">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center [perspective:1000px]">
-        <div 
-          className={cn(
-            "relative w-full h-full transition-transform duration-500 transform-style-3d",
-            cardBrand && 'rotate-y-180'
-          )}
-        >
-          <div className="absolute w-full h-full backface-hidden">
-            <CreditCard className="size-5 text-muted-foreground" />
-          </div>
-          <div className="absolute w-full h-full backface-hidden rotate-y-180">
-            {brandLogo && (
-              <Image 
-                src={brandLogo} 
-                alt={`${cardBrand} logo`} 
-                width={24} 
-                height={24} 
-                className="object-contain"
-              />
-            )}
-          </div>
-        </div>
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center">
+        <CreditCard className="size-5 text-muted-foreground" />
       </div>
       
       <Input
