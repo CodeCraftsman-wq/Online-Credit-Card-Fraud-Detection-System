@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -34,7 +35,7 @@ function LogoutButton() {
       onClick={handleLogout}
       disabled={isLoggingOut}
       aria-label="Log Out"
-      className="text-muted-foreground hover:text-foreground"
+      className="text-muted-foreground hover:text-destructive"
     >
       <LogOut className="size-5" />
     </Button>
@@ -67,7 +68,6 @@ function UserDisplay() {
          <span className="hidden md:inline">{displayEmail}</span>
       </div>
       <ThemeToggle />
-      <LogoutButton />
     </div>
   );
 }
@@ -80,12 +80,16 @@ export default function AppLayout({
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-xl md:px-6">
-        <nav className="flex w-full items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Logo />
             <span className="text-lg font-semibold">FraudShield</span>
-          </Link>          <UserDisplay />
-        </nav>
+          </Link>          
+          <div className="flex items-center gap-4">
+            <UserDisplay />
+            <LogoutButton />
+          </div>
+        </div>
       </header>
       {children}
     </div>
