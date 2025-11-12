@@ -98,4 +98,12 @@
       content: '';
       @apply absolute inset-[-200%] animate-spin-slow bg-[conic-gradient(from_90deg_at_50%_50%,hsl(var(--primary))_0%,#4285F4_50%,hsl(var(--primary))_100%)] z-[-1];
   }
+  .glowing-border-sidebar {
+      @apply relative overflow-hidden;
+  }
+  .glowing-border-sidebar::before {
+      content: '';
+      @apply absolute inset-[-200%] animate-pulse bg-[conic-gradient(from_90deg_at_50%_50%,hsl(var(--sidebar-primary))_0%,hsl(var(--sidebar-accent))_50%,hsl(var(--sidebar-primary))_100%)] z-[-1];
+  }
 }
+
