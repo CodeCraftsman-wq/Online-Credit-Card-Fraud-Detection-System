@@ -11,15 +11,11 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarFooter,
-  SidebarTrigger,
-  SidebarRail,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { Home, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 function LogoutButton() {
@@ -55,17 +51,9 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  // We need a wrapper around the children to apply the animation
-  const handleLogout = () => {
-    setIsLoggingOut(true);
-  };
-
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarRail />
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
@@ -96,12 +84,6 @@ export default function AppLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-12 items-center gap-2 border-b bg-background/80 backdrop-blur-xl p-2 sticky top-0 z-10">
-          <SidebarTrigger className="md:hidden" />
-          <div className="flex-1">
-            {/* Header Content can go here */}
-          </div>
-        </header>
         {children}
       </SidebarInset>
     </SidebarProvider>
