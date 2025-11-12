@@ -182,7 +182,7 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
 
 
   return (
-    <Card className="col-span-1 lg:col-span-2 glassmorphic">
+    <Card className="col-span-1 lg:col-span-2 glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Transaction History</CardTitle>

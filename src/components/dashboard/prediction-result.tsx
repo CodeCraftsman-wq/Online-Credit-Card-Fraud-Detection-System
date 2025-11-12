@@ -59,7 +59,7 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
 
   return (
     <Card
-      className="relative overflow-hidden glassmorphic"
+      className="relative overflow-hidden glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10"
     >
       <CardHeader>
         <CardTitle>Real-time Prediction</CardTitle>

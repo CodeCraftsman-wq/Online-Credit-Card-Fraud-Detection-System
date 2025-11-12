@@ -10,6 +10,12 @@ export default {
   ],
   theme: {
     extend: {
+      scale: {
+        '101': '1.01',
+      },
+      transitionProperty: {
+        'transform-shadow': 'transform, box-shadow',
+      },
       fontFamily: {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],
