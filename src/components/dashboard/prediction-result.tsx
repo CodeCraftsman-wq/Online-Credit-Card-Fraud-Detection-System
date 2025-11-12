@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -17,11 +18,41 @@ interface PredictionResultProps {
   prediction: FraudPredictionOutput | null;
 }
 
+function useTypingAnimation(text: string, speed = 30) {
+  const [animatedText, setAnimatedText] = useState('');
+
+  useEffect(() => {
+    if (!text) {
+      setAnimatedText('');
+      return;
+    }
+
+    setAnimatedText('');
+    let index = 0;
+    const intervalId = setInterval(() => {
+      if (index < text.length) {
+        setAnimatedText((prev) => prev + text.charAt(index));
+        index++;
+      } else {
+        clearInterval(intervalId);
+      }
+    }, speed);
+
+    return () => clearInterval(intervalId);
+  }, [text, speed]);
+  
+  return animatedText;
+}
+
+
 export function PredictionResult({ prediction }: PredictionResultProps) {
   const isFraudulent = prediction?.isFraudulent;
   const confidence = (prediction?.confidenceScore ?? 0) * 100;
-  const reasoning = prediction?.reasoning;
+  const reasoning = prediction?.reasoning ?? '';
   const riskFactors = prediction?.riskFactors ?? [];
+  
+  const animatedReasoning = useTypingAnimation(reasoning);
+
 
   const status =
     prediction === null
@@ -103,10 +134,10 @@ export function PredictionResult({ prediction }: PredictionResultProps) {
                     </div>
                     
                     {reasoning && (
-                      <div className='space-y-2 text-left p-3 bg-card/50 rounded-lg'>
+                      <div className='space-y-2 text-left p-3 bg-card/50 rounded-lg min-h-[5rem]'>
                         <h4 className='font-medium text-sm'>AI Reasoning</h4>
                         <p className='text-sm text-muted-foreground italic'>
-                          &quot;{reasoning}&quot;
+                          &quot;{animatedReasoning}<span className="inline-block w-1 h-4 bg-primary animate-pulse ml-1"></span>&quot;
                         </p>
                       </div>
                     )}
