@@ -173,7 +173,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
   }
 
   return (
-    <Card className="glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
+    <Card className="glassmorphic transition-shadow duration-300 ease-out hover:shadow-2xl hover:shadow-primary/10">
       <CardHeader>
         <CardTitle>Simulate Transaction</CardTitle>
         <CardDescription>

@@ -214,7 +214,7 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const isFiltered = searchTerm.trim() !== '' || filterStatus !== 'all';
 
   return (
-    <Card className="col-span-1 lg:col-span-2 glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
+    <Card className="col-span-1 lg:col-span-2 glassmorphic transition-shadow duration-300 ease-out hover:shadow-2xl hover:shadow-primary/10">
       <CardHeader className="flex flex-col gap-4">
         <div className="flex flex-row items-start justify-between">
           <div>

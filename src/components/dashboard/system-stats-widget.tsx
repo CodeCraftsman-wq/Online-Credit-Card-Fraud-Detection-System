@@ -68,7 +68,7 @@ export function SystemStatsWidget({ userId }: { userId: string }) {
 
   if (isLoading && totalAnalyzed === 0) {
     return (
-      <Card className="glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
+      <Card className="glassmorphic transition-shadow duration-300 ease-out hover:shadow-2xl hover:shadow-primary/10">
         <CardHeader>
           <CardTitle className="text-base font-medium">System Stats</CardTitle>
         </CardHeader>
@@ -87,7 +87,7 @@ export function SystemStatsWidget({ userId }: { userId: string }) {
   }
 
   return (
-    <Card className="glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
+    <Card className="glassmorphic transition-shadow duration-300 ease-out hover:shadow-2xl hover:shadow-primary/10">
       <CardHeader>
         <CardTitle className="text-base font-medium text-muted-foreground">
           Real-Time Analysis

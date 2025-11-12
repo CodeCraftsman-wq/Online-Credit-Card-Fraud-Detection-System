@@ -86,7 +86,7 @@ export function PredictionResult({ prediction }: { prediction: FraudPredictionOu
 
   return (
     <Card
-      className="relative overflow-hidden glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10"
+      className="relative overflow-hidden glassmorphic transition-shadow duration-300 ease-out hover:shadow-2xl hover:shadow-primary/10"
     >
       <CardHeader>
         <CardTitle>Real-time Prediction</CardTitle>
