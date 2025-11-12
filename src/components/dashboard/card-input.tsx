@@ -21,7 +21,7 @@ type CardBrand = keyof typeof cardBrands;
 function getCardBrand(cardNumber: string): CardBrand | null {
   for (const brand in cardBrands) {
     if (cardBrands[brand as CardBrand].regex.test(cardNumber)) {
-      return brand as CardBand;
+      return brand as CardBrand;
     }
   }
   return null;
