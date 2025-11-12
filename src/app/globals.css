@@ -91,4 +91,11 @@
   .glassmorphic {
     @apply bg-card/60 backdrop-blur-xl border border-border/20;
   }
+  .glowing-border {
+      @apply relative overflow-hidden rounded-xl p-[1px];
+  }
+  .glowing-border::before {
+      content: '';
+      @apply absolute inset-[-200%] animate-spin-slow bg-[conic-gradient(from_90deg_at_50%_50%,hsl(var(--primary))_0%,#4285F4_50%,hsl(var(--primary))_100%)] z-[-1];
+  }
 }

@@ -83,74 +83,78 @@ function LoginPageContent() {
       <div className='absolute top-4 right-4'>
         <ThemeToggle />
       </div>
-      <Card className={cn(
-        "w-full max-w-sm glassmorphic",
-        isMounted ? 'animate-fade-in-up' : 'opacity-0'
-      )}>
-        <CardHeader className="text-center">
-          <div className={cn("mx-auto mb-4", animationClass('150ms'))}>
-            <Logo className="size-12" />
-          </div>
-          <div className={cn(animationClass('300ms'))}>
-            <CardTitle className="text-2xl">Fraud Detection System</CardTitle>
-            <CardDescription>
-              Enter your credentials to access your dashboard.
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className={cn(animationClass('450ms'))}>
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="user@example.com"
-                          {...field}
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className={cn(animationClass('600ms'))}>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input placeholder="••••••••" {...field} type="password" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className={cn(animationClass('750ms'))}>
-                <Button
-                  type="submit"
-                  className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out active:scale-95 active:opacity-75 hover:opacity-90"
-                  disabled={isLoggingIn}
-                >
-                  {isLoggingIn && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {isLoggingIn ? 'Logging in...' : 'Log In'}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      <div
+        className={cn(
+          "glowing-border w-full max-w-sm shadow-2xl shadow-primary/10",
+          isMounted ? 'animate-fade-in-up' : 'opacity-0'
+        )}
+      >
+        <Card className="w-full">
+          <CardHeader className="text-center">
+            <div className={cn("mx-auto mb-4", animationClass('150ms'))}>
+              <Logo className="size-12" />
+            </div>
+            <div className={cn(animationClass('300ms'))}>
+              <CardTitle className="text-2xl">Fraud Detection System</CardTitle>
+              <CardDescription>
+                Enter your credentials to access your dashboard.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div className={cn(animationClass('450ms'))}>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="user@example.com"
+                            {...field}
+                            type="email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className={cn(animationClass('600ms'))}>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input placeholder="••••••••" {...field} type="password" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className={cn(animationClass('750ms'))}>
+                  <Button
+                    type="submit"
+                    className="w-full rounded-full font-semibold transition-all duration-150 ease-in-out active:scale-95 active:opacity-75 hover:opacity-90"
+                    disabled={isLoggingIn}
+                  >
+                    {isLoggingIn && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {isLoggingIn ? 'Logging in...' : 'Log In'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
       <div
         className={cn(
           "absolute bottom-4 w-full px-4 space-y-4 text-center text-xs text-muted-foreground",

@@ -136,6 +136,11 @@ export default {
             color: '#4285F4', // Blue
           },
         },
+        'spin-slow': {
+          to: {
+            transform: 'rotate(360deg)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -144,6 +149,7 @@ export default {
         'fade-in-down': 'fade-in-down 0.5s ease-out',
         highlight: 'highlight 1.5s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
+        'spin-slow': 'spin-slow 5s linear infinite',
       },
     },
   },
