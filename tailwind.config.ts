@@ -152,15 +152,13 @@ export default {
             transform: 'rotate(360deg)',
           },
         },
-        'bounce-dot': {
-          '0%, 100%': {
-            transform: 'translateY(0)',
-            'animation-timing-function': 'cubic-bezier(0.8, 0, 1, 1)',
-          },
-          '50%': {
-            transform: 'translateY(-25%)',
-            'animation-timing-function': 'cubic-bezier(0, 0, 0.2, 1)',
-          },
+        'spinner-ease': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'spinner-grow': {
+          '0%, 100%': { transform: 'scale(0)' },
+          '50%': { transform: 'scale(1)' },
         },
       },
       animation: {
@@ -171,7 +169,8 @@ export default {
         'row-in': 'row-in 0.75s ease-out',
         'gemini-shimmer': 'gemini-shimmer 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 5s linear infinite',
-        'bounce-dot': 'bounce-dot 0.6s infinite',
+        'spinner-ease': 'spinner-ease 2s cubic-bezier(0.36, 0, 0.64, 1) infinite',
+        'spinner-grow': 'spinner-grow 1.5s cubic-bezier(0.36, 0, 0.64, 1) infinite',
       },
     },
   },

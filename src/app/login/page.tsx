@@ -45,14 +45,32 @@ const tech = [
   { name: 'TypeScript', Icon: TypeScriptLogo },
 ]
 
-function LoadingDots() {
-    return (
-      <div className="flex items-center justify-center gap-1">
-        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current [animation-delay:-0.3s]"></div>
-        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current [animation-delay:-0.15s]"></div>
-        <div className="h-1.5 w-1.5 animate-bounce-dot rounded-full bg-current"></div>
-      </div>
-    );
+function WindowsSpinner() {
+  return (
+    <div className="relative size-5 animate-spinner-ease">
+      <div className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow" />
+      <div
+        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
+        style={{ animationDelay: '125ms' }}
+      />
+      <div
+        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
+        style={{ animationDelay: '250ms' }}
+      />
+      <div
+        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
+        style={{ animationDelay: '375ms' }}
+      />
+      <div
+        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
+        style={{ animationDelay: '500ms' }}
+      />
+      <div
+        className="absolute left-1/2 top-0 h-[3px] w-[3px] -translate-x-1/2 rounded-full bg-current animate-spinner-grow"
+        style={{ animationDelay: '625ms' }}
+      />
+    </div>
+  );
 }
 
 function LoginPageContent() {
@@ -155,7 +173,7 @@ function LoginPageContent() {
                     disabled={isLoggingIn}
                   >
                     {isLoggingIn && (
-                      <LoadingDots />
+                      <WindowsSpinner />
                     )}
                     {isLoggingIn ? 'Signing in' : 'Log In'}
                   </Button>
