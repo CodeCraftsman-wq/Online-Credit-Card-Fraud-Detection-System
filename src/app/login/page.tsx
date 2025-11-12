@@ -89,7 +89,7 @@ function LoginPageContent() {
           isMounted ? 'animate-fade-in-up' : 'opacity-0'
         )}
       >
-        <Card className="w-full">
+        <Card className="w-full glassmorphic">
           <CardHeader className="text-center">
             <div className={cn("mx-auto mb-4", animationClass('150ms'))}>
               <Logo className="size-12" />
