@@ -34,9 +34,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Info, Loader2, Trash2, FileDown } from 'lucide-react';
+import { Info, Loader2, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface TransactionHistoryProps {
   userId: string;
@@ -46,6 +48,8 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isClearing, setIsClearing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
   
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
@@ -56,6 +60,25 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   }, [firestore, userId]);
   
   const { data: transactions, isLoading, error } = useCollection<Transaction>(transactionsQuery);
+
+  const filteredTransactions = useMemo(() => {
+    if (!transactions) return [];
+    
+    return transactions.filter(tx => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch = searchTerm.trim() === '' ||
+        tx.merchantDetails.toLowerCase().includes(searchLower) ||
+        tx.location.toLowerCase().includes(searchLower) ||
+        tx.id.toLowerCase().includes(searchLower);
+
+      const matchesStatus = filterStatus === 'all' ||
+        (filterStatus === 'fraud' && tx.prediction.isFraudulent) ||
+        (filterStatus === 'legit' && !tx.prediction.isFraudulent);
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [transactions, searchTerm, filterStatus]);
+
 
   const handleClearHistory = async () => {
     if (!firestore || !userId) return;
@@ -99,6 +122,11 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
       setIsClearing(false);
     }
   };
+  
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('all');
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -131,13 +159,13 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
       );
     }
     
-    if (transactions && transactions.length > 0) {
-      return transactions.map((tx, index) => (
+    if (filteredTransactions.length > 0) {
+      return filteredTransactions.map((tx, index) => (
         <TableRow 
             key={tx.id}
             className={cn(
                 'border-b-white/5',
-                 index === 0 && transactions.length > 1 && 'animate-row-in'
+                 index === 0 && transactions?.length === filteredTransactions.length && 'animate-row-in'
             )}
         >
           <TableCell>
@@ -170,8 +198,12 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
         <TableCell colSpan={6} className="h-24 text-center">
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
             <Info className="size-8" />
-            <span>No transactions yet.</span>
-            <span className='text-xs'>Simulate a transaction to see its history here.</span>
+            <span>No transactions found.</span>
+             {searchTerm || filterStatus !== 'all' ? (
+                <span className='text-xs'>Try adjusting your search or filters.</span>
+             ) : (
+                <span className='text-xs'>Simulate a transaction to see its history here.</span>
+             )}
           </div>
         </TableCell>
       </TableRow>
@@ -179,51 +211,85 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
   };
 
   const canPerformActions = !transactions || transactions.length === 0 || isLoading;
-
+  const isFiltered = searchTerm.trim() !== '' || filterStatus !== 'all';
 
   return (
     <Card className="col-span-1 lg:col-span-2 glassmorphic transition-transform-shadow duration-300 ease-out hover:scale-101 hover:shadow-2xl hover:shadow-primary/10">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Transaction History</CardTitle>
-          <CardDescription>
-            A log of all simulated transactions and their fraud status.
-          </CardDescription>
-        </div>
-        <div className="flex items-center gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={canPerformActions || isClearing}
-                  className="group text-muted-foreground transition-colors hover:text-destructive"
+      <CardHeader className="flex flex-col gap-4">
+        <div className="flex flex-row items-start justify-between">
+          <div>
+            <CardTitle>Transaction History</CardTitle>
+            <CardDescription>
+              A log of all simulated transactions and their fraud status.
+            </CardDescription>
+          </div>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={canPerformActions || isClearing}
+                className="group text-muted-foreground transition-colors hover:text-destructive"
+              >
+                <Trash2 className="size-5 transition-transform group-hover:scale-110 group-active:scale-95" />
+                <span className="sr-only">Clear History</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete all
+                  transaction history records from the database.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleClearHistory}
+                  className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  disabled={isClearing}
                 >
-                  <Trash2 className="size-5 transition-transform group-hover:scale-110 group-active:scale-95" />
-                  <span className="sr-only">Clear History</span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete all
-                    transaction history records from the database.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleClearHistory}
-                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                    disabled={isClearing}
-                  >
-                    {isClearing ? <Loader2 className="mr-2 animate-spin" /> : null}
-                    {isClearing ? 'Clearing...' : 'Yes, clear history'}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  {isClearing ? <Loader2 className="mr-2 animate-spin" /> : null}
+                  {isClearing ? 'Clearing...' : 'Yes, clear history'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by merchant, location, ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-9"
+              disabled={isLoading || (!transactions && !isLoading)}
+            />
+          </div>
+          <Select value={filterStatus} onValueChange={setFilterStatus} disabled={isLoading || (!transactions && !isLoading)}>
+            <SelectTrigger className="w-[180px] h-9">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="legit">Legitimate</SelectItem>
+              <SelectItem value="fraud">Fraudulent</SelectItem>
+            </SelectContent>
+          </Select>
+          {isFiltered && (
+             <Button
+                variant="ghost"
+                onClick={handleClearFilters}
+                className="h-9 px-3 animate-in fade-in duration-300 animate-button-press"
+              >
+                <X className="mr-1.5 size-4" />
+                Clear
+              </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
