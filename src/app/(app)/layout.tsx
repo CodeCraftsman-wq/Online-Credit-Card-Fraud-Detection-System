@@ -2,23 +2,12 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-  SidebarFooter,
-  SidebarRail
-} from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Home, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
 
 function LogoutButton() {
   const router = useRouter();
@@ -34,19 +23,18 @@ function LogoutButton() {
   };
 
   return (
-    <SidebarMenuItem>
-      <SidebarMenuButton
-        onClick={handleLogout}
-        disabled={isLoggingOut}
-        tooltip={{ children: 'Log Out' }}
-      >
-        <LogOut />
-        <span>{isLoggingOut ? 'Logging out...' : 'Log Out'}</span>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={handleLogout}
+      disabled={isLoggingOut}
+      aria-label="Log Out"
+      className="text-muted-foreground hover:text-foreground"
+    >
+      <LogOut className="size-5" />
+    </Button>
   );
 }
-
 
 export default function AppLayout({
   children,
@@ -54,41 +42,20 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarRail />
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
+    <div className="flex min-h-screen w-full flex-col">
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-xl md:px-6">
+        <nav className="flex w-full items-center justify-between">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <Logo />
             <span className="text-lg font-semibold">FraudShield</span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LogoutButton />
           </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive
-                tooltip={{ children: 'Dashboard' }}
-              >
-                <Link href="/dashboard">
-                  <Home />
-                  <span>Dashboard</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-            <div className='flex items-center justify-between'>
-              <LogoutButton />
-              <ThemeToggle />
-            </div>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+        </nav>
+      </header>
+      {children}
+    </div>
   );
 }
