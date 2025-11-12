@@ -36,7 +36,7 @@ export default function DashboardPage() {
   
   const animationClass = (delay: string) =>
     cn(
-      'opacity-0 animate-fade-in-down fill-mode-forwards',
+      'opacity-0 animate-fade-in-up fill-mode-forwards',
       isMounted ? `animation-delay-[${delay}]` : ''
     );
 
@@ -50,18 +50,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="relative flex-1 overflow-hidden">
-       <PlexusBackground className="opacity-50 dark:opacity-30" />
+    <main className="relative flex-1 overflow-auto">
+       <PlexusBackground className="opacity-70 dark:opacity-50" />
        <div className="relative p-4 md:p-6 lg:p-8">
-         <div className="mx-auto grid max-w-7xl auto-rows-max items-start gap-4 md:gap-8 lg:grid-cols-3">
-           <div className={cn('grid gap-4 lg:col-span-1', animationClass('200ms'))}>
-             <TransactionForm onNewTransaction={handleNewTransaction} userId={user.uid} />
-             <EmailAlertCard />
-           </div>
-           <div className={cn('grid gap-4 lg:col-span-2', animationClass('400ms'))}>
+         <div className="mx-auto grid max-w-7xl grid-cols-1 auto-rows-max items-start gap-4 md:gap-8 lg:grid-cols-2">
+            <div className={cn("grid gap-4 auto-rows-max", animationClass('200ms'))}>
+              <TransactionForm onNewTransaction={handleNewTransaction} userId={user.uid} />
+              <EmailAlertCard />
+            </div>
+            <div className={cn("grid gap-4", animationClass('400ms'))}>
               <PredictionResult prediction={currentPrediction} />
+            </div>
+            <div className={cn('lg:col-span-2', animationClass('600ms'))}>
               <TransactionHistory userId={user.uid} />
-           </div>
+            </div>
          </div>
       </div>
     </main>
