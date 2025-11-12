@@ -328,17 +328,15 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
         <Separator className="my-4" />
         <div className="space-y-2">
            <p className="text-sm font-medium text-muted-foreground">Need Sample Data?</p>
-            <div className={cn("relative rounded-lg p-px", isGenerating && "glowing-border")}>
-              <Button
-                variant="secondary"
-                className="w-full"
-                onClick={handleGenerateSamples}
-                disabled={isGenerating || isSubmitting}
-              >
-                <Sparkles className="mr-2 h-4 w-4" />
-                {isGenerating ? 'Generating...' : 'Generate 5 Samples with AI'}
-              </Button>
-           </div>
+           <Button
+            variant="secondary"
+            className="w-full"
+            onClick={handleGenerateSamples}
+            disabled={isGenerating || isSubmitting}
+           >
+            <Sparkles className={cn("mr-2 h-4 w-4", isGenerating && "animate-gemini-shimmer")} />
+            {isGenerating ? 'Generating...' : 'Generate 5 Samples with AI'}
+          </Button>
         </div>
       </CardContent>
     </Card>
