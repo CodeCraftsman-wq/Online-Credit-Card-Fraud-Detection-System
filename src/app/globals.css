@@ -106,4 +106,3 @@
       @apply absolute inset-[-200%] animate-pulse bg-[conic-gradient(from_90deg_at_50%_50%,hsl(var(--sidebar-primary))_0%,hsl(var(--sidebar-accent))_50%,hsl(var(--sidebar-primary))_100%)] z-[-1];
   }
 }
-
