@@ -14,6 +14,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { AccentColorPicker } from '@/components/accent-color-picker';
 
 function LogoutButton() {
   const router = useRouter();
@@ -67,6 +68,7 @@ function UserDisplay() {
          </Avatar>
          <span className="hidden md:inline">{displayEmail}</span>
       </div>
+      <AccentColorPicker />
       <ThemeToggle />
       <LogoutButton />
     </div>
