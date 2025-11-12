@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -14,7 +13,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { AccentColorPicker } from '@/components/accent-color-picker';
 
 function LogoutButton() {
   const router = useRouter();
@@ -68,7 +66,6 @@ function UserDisplay() {
          </Avatar>
          <span className="hidden md:inline">{displayEmail}</span>
       </div>
-      <AccentColorPicker />
       <ThemeToggle />
       <LogoutButton />
     </div>
@@ -87,8 +84,7 @@ export default function AppLayout({
           <Link href="/dashboard" className="flex items-center gap-2">
             <Logo />
             <span className="text-lg font-semibold">FraudShield</span>
-          </Link>
-          <UserDisplay />
+          </Link>          <UserDisplay />
         </nav>
       </header>
       {children}
