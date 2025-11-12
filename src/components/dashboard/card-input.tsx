@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
-import { CreditCard, CheckCircle2 } from 'lucide-react';
+import { CreditCard, CheckCircle2, XCircle } from 'lucide-react';
 import { cn, luhnCheck } from '@/lib/utils';
 import { useFormField } from '@/components/ui/form';
 
@@ -29,14 +29,16 @@ interface CardInputProps {
 export function CardInput({ field }: CardInputProps) {
   const { error } = useFormField();
   const [cardValue, setCardValue] = useState(field.value || '');
+  const rawValue = cardValue.replace(/\s/g, '');
 
-  const isValid = useMemo(() => luhnCheck(cardValue.replace(/\s/g, '')), [cardValue]);
+  const isValid = useMemo(() => luhnCheck(rawValue), [rawValue]);
+  const showInvalid = !isValid && rawValue.length > 4;
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formattedValue = formatCardNumber(e.target.value);
-    const rawValue = formattedValue.replace(/\s/g, '');
     setCardValue(formattedValue);
-    field.onChange(rawValue);
+    field.onChange(formattedValue.replace(/\s/g, ''));
   };
   
   return (
@@ -57,6 +59,12 @@ export function CardInput({ field }: CardInputProps) {
       {isValid && !error && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
           <CheckCircle2 className="size-5 text-green-500 animate-in fade-in zoom-in-50" />
+        </div>
+      )}
+      
+      {showInvalid && !error && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <XCircle className="size-5 text-destructive animate-in fade-in zoom-in-50" />
         </div>
       )}
     </div>
