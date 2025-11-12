@@ -248,7 +248,6 @@ export function TransactionHistory({ userId }: TransactionHistoryProps) {
     </Card>
   );
 }
-
     
 
     
