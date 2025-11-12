@@ -342,3 +342,4 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
     </Card>
   );
 }
+    
