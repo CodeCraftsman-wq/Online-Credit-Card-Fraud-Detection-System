@@ -11,12 +11,15 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarFooter,
+  SidebarTrigger,
+  SidebarRail
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Home, LogOut } from 'lucide-react';
+import { Home, LogOut, PanelLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
 
 function LogoutButton() {
   const router = useRouter();
@@ -54,6 +57,7 @@ export default function AppLayout({
   return (
     <SidebarProvider>
       <Sidebar>
+        <SidebarRail />
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
@@ -84,6 +88,12 @@ export default function AppLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
+        <header className="flex h-14 items-center gap-4 border-b bg-background/60 px-4 md:px-6 backdrop-blur-xl sticky top-0 z-30">
+            <SidebarTrigger className="md:hidden" />
+            <div className="flex-1">
+                {/* You can add a page title here if you want */}
+            </div>
+        </header>
         {children}
       </SidebarInset>
     </SidebarProvider>
