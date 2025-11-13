@@ -200,7 +200,6 @@ export default function LoginPage() {
             attribute="class"
             defaultTheme="dark"
             enableSystem
-            disableTransitionOnChange
         >
             <LoginPageContent />
         </ThemeProvider>
