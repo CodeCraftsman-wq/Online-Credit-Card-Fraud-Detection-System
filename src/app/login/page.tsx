@@ -28,7 +28,6 @@ import { NextJsLogo } from '@/components/nextjs-logo';
 import { ReactLogo } from '@/components/react-logo';
 import { TypeScriptLogo } from '@/components/typescript-logo';
 import { PlexusBackground } from '@/components/ui/plexus-background';
-import { ThemeProvider, useTheme } from 'next-themes';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 
@@ -196,12 +195,6 @@ function LoginPageContent() {
 
 export default function LoginPage() {
     return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-        >
-            <LoginPageContent />
-        </ThemeProvider>
+        <LoginPageContent />
     )
 }

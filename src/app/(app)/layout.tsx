@@ -14,7 +14,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { ThemeProvider } from 'next-themes';
 
 function LogoutButton() {
   const router = useRouter();
@@ -79,12 +78,6 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
       <div className="flex min-h-screen w-full flex-col">
         <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/60 px-4 backdrop-blur-lg md:px-6">
           <div className="flex w-full items-center justify-between">
@@ -100,6 +93,5 @@ export default function AppLayout({
         </header>
         {children}
       </div>
-    </ThemeProvider>
   );
 }
