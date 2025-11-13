@@ -132,7 +132,7 @@ export function PredictionResult({ prediction }: { prediction: FraudPredictionOu
                     {reasoning && (
                       <div className='space-y-2 text-left p-3 bg-card/50 rounded-lg min-h-[5rem]'>
                         <h4 className='font-medium text-sm'>AI Reasoning</h4>
-                        <p className='text-sm text-muted-foreground font-sans'>
+                        <p className='text-sm font-semibold text-foreground font-sans'>
                           {animatedReasoning}
                           { animatedReasoning.length === reasoning.length ? null : <span className="inline-block w-1 h-4 bg-primary animate-pulse ml-1"></span>}
                         </p>
