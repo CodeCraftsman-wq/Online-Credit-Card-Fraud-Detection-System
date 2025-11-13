@@ -14,6 +14,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { ThemeProvider } from 'next-themes';
 
 function LogoutButton() {
   const router = useRouter();
@@ -78,20 +79,27 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/60 px-4 backdrop-blur-lg md:px-6">
-        <div className="flex w-full items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Logo />
-            <span className="text-lg font-semibold">FraudShield</span>
-          </Link>          
-          <div className="flex items-center gap-4">
-            <UserDisplay />
-            <LogoutButton />
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <div className="flex min-h-screen w-full flex-col">
+        <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/60 px-4 backdrop-blur-lg md:px-6">
+          <div className="flex w-full items-center justify-between">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <Logo />
+              <span className="text-lg font-semibold">FraudShield</span>
+            </Link>          
+            <div className="flex items-center gap-4">
+              <UserDisplay />
+              <LogoutButton />
+            </div>
           </div>
-        </div>
-      </header>
-      {children}
-    </div>
+        </header>
+        {children}
+      </div>
+    </ThemeProvider>
   );
 }
