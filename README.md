@@ -34,3 +34,36 @@ The project is built using a modern, robust, and scalable technology stack:
 -   **Icons:** **Lucide React** - A library of simply designed, beautiful icons.
 -   **Hosting:** **Firebase App Hosting** - The application is configured for deployment on Firebase's managed, secure hosting platform for web apps.
 
+
+### Setup Instructions
+
+1.  **Clone the Repository**
+    Open a terminal and run the following command to clone the project:
+    ```bash
+    git clone https://github.com/your-username/fraudshield.git
+    ```
+    *(Note: Replace `https://github.com/your-username/fraudshield.git` with the actual repository URL.)*
+
+2.  **Open in VS Code**
+    Navigate into the newly created project directory and open it with VS Code:
+    ```bash
+    cd fraudshield
+    code .
+    ```
+
+3.  **Install Dependencies**
+    Open the integrated terminal in VS Code (`Ctrl + ` \` `` or `View > Terminal`) and install the required npm packages:
+    ```bash
+    npm install
+    ```
+    This will download all the necessary dependencies listed in the `package.json` file.
+
+4.  **Run the Development Server**
+    Once the installation is complete, start the Next.js development server:
+    ```bash
+    npm run dev
+    ```
+    This command runs the application in development mode with hot-reloading enabled.
+
+5.  **View the Application**
+    Open your web browser and navigate to [http://localhost:9002](http://localhost:9002) to see the application running. Any changes you make to the source code will now automatically be reflected in the browser.
