@@ -2,6 +2,7 @@
 
 import { predictFraud } from '@/ai/flows/real-time-fraud-prediction';
 import { generateSyntheticTransactions } from '@/ai/flows/generate-synthetic-transactions';
+import { generateCardDetails } from '@/ai/flows/generate-card-details';
 import type { Transaction, TransactionInput } from '@/lib/types';
 import { z } from 'zod';
 import { luhnCheck } from '@/lib/utils';
@@ -50,10 +51,8 @@ export async function generateAndPredictTransactions(
 
     for (const txInput of generatedTransactions) {
       try {
-        // The generated data doesn't include a CVV, so we add a mock one.
         const fullTxInput = {
           ...txInput,
-          cvv: (Math.floor(Math.random() * 900) + 100).toString(),
         };
         const prediction = await predictFraud(fullTxInput);
         transactionsWithPredictions.push({
@@ -97,5 +96,15 @@ export async function sendFraudAlertEmail(
   } catch (e: any) {
     console.error('Failed to send alert email:', e);
     return { success: false, error: e.message || 'An unknown error occurred.' };
+  }
+}
+
+export async function generateCardDetailsAction(): Promise<{ data: { cardNumber: string; cvv: string } | null; error: string | null }> {
+  try {
+    const cardDetails = await generateCardDetails();
+    return { data: cardDetails, error: null };
+  } catch (e: any) {
+    console.error('Failed to generate card details:', e);
+    return { data: null, error: e.message || 'An unknown error occurred while generating card details.' };
   }
 }

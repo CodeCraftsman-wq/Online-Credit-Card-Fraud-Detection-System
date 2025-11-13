@@ -51,7 +51,7 @@ const prompt = ai.definePrompt({
 Your task is to generate a list of {{{count}}} synthetic transactions.
 
 Each transaction MUST include:
-- A realistic, 16-digit credit card number. Ensure the numbers you generate are varied.
+- A realistic, 16-digit credit card number that passes the Luhn algorithm check. Ensure the numbers you generate are varied.
 - A realistic, 3-digit CVV.
 
 The data should be realistic and include a mix of both clearly legitimate transactions and transactions with suspicious characteristics.
