@@ -375,12 +375,17 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
                 </p>
                 <Button
                   variant="secondary"
-                  className="w-full max-w-xs"
+                  className={cn(
+                    "transition-all duration-300 ease-in-out",
+                    isGeneratingCard
+                      ? "h-12 w-12 rounded-full"
+                      : "w-full max-w-xs"
+                  )}
                   onClick={handleGenerateCardDetails}
                   disabled={isGeneratingCard || isSubmitting || isGenerating}
                 >
-                  <Sparkles className={cn("mr-2 h-4 w-4", isGeneratingCard && "animate-gemini-shimmer")} />
-                  {isGeneratingCard ? 'Generating...' : 'Generate Card Details'}
+                  <Sparkles className={cn("size-5", isGeneratingCard && "animate-gemini-shimmer")} />
+                  {!isGeneratingCard && <span className="ml-2">Generate Card Details</span>}
                 </Button>
             </div>
           </TabsContent>
@@ -402,3 +407,5 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
     </Card>
   );
 }
+
+    
