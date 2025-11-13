@@ -1,5 +1,8 @@
 # FraudShield: A Real-time Fraud Detection System
 
+Web Page Preview Link: https://studio--studio-6007815239-4b141.us-central1.hosted.app
+
+
 This project is a web application designed to simulate and detect fraudulent financial transactions in real-time. The system, named "FraudShield", provides a user-friendly dashboard where users can input transaction details and receive an immediate fraud prediction powered by a generative AI model.
 
 ## How It Works
