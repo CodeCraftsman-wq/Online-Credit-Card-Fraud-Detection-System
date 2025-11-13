@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { IndianRupee, Clock, Hash, Loader2, MapPin, Sparkles, Store, Lock, Bot } from 'lucide-react';
+import { IndianRupee, Clock, Hash, Loader2, MapPin, Sparkles, Store, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -367,7 +367,7 @@ export function TransactionForm({ onNewTransaction, userId }: TransactionFormPro
           <TabsContent value="generate">
             <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border-2 border-dashed border-border bg-card/20 p-8 text-center min-h-[200px]">
                 <div className='p-3 rounded-full bg-primary/10 border border-primary/20'>
-                  <Bot className="size-8 text-primary" />
+                  <Sparkles className="size-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold">Generate with AI</h3>
                 <p className="text-sm text-muted-foreground">
