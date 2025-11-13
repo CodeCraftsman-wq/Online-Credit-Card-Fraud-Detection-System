@@ -14,7 +14,7 @@ import { ShieldAlert, ShieldCheck, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
 
-function useTypingAnimation(text: string, speed = 30) {
+function useTypingAnimation(text: string, speed = 50) {
   const [animatedText, setAnimatedText] = useState('');
 
   useEffect(() => {
