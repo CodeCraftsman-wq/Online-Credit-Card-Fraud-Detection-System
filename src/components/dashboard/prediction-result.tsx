@@ -143,7 +143,7 @@ export function PredictionResult({ prediction }: { prediction: FraudPredictionOu
                       <>
                         <Separator />
                         <div className="space-y-2 text-left">
-                          <h4 className="font-medium text-sm">XAI Analysis: Key Risk Factors</h4>
+                          <h4 className="font-medium text-sm">Key Risk Factors</h4>
                           <ul className="space-y-1 text-sm text-muted-foreground">
                             {riskFactors.map((item, index) => (
                               <li key={index} className="flex justify-between items-center">
